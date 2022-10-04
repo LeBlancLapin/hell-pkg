@@ -1,0 +1,59 @@
+#!/bin/bash
+
+declare -ar HellPkgManagersArray=("pamac" "pacman" "apt" "dnf" "yum" "zypper")
+
+function cf_hellpkg {
+	if [[ $# -eq 1 ]]
+	then
+		for x in ${HellPkgManagersArray[@]}
+		do
+			if [[ -x $(which $x) ]]
+			then
+				if [[ $x == "pacman" ]]
+				then
+					sudo $x -S $1
+					return 0
+				else
+					sudo $x install $1
+					return 0
+				fi
+			fi
+		done
+	else
+		>&2 echo "Ne donne pas plus d'UN argument, putain de gorille"
+		return 7
+	fi
+	return 1
+}
+
+function is_slipologue_distro {
+	for x in ${HellPkgManagersArray[@]}
+        do
+        	if [[ -x $(which $x) ]]
+                then
+                	return 1
+        	fi
+	done
+	return 0
+}
+
+if [[ $# -gt 0 ]]
+then
+	if [[ is_slipologue_distro ]]
+	then
+		>&2 echo "C'est quoi ta putain de distribution de slipologue là ?"
+		exit 126
+	fi
+
+	for x in "$@"
+	do
+		t=(which $x)
+		if [[ ! -x $t ]]
+		then
+			cf_hellpkg "$x"
+		fi
+	done
+else
+	>&2 echo -ne "Tu veux installer quoi comme programme, espèce de macaque ?\nPense aussi à apprendre à gérer tes sources parce que là ça paraît mal barré."
+	exit 1
+fi
