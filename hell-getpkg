@@ -39,7 +39,7 @@ function is_slipologue_distro {
 
 if [[ $# -gt 0 ]]
 then
-	if [[ is_slipologue_distro ]]
+	if is_slipologue_distro
 	then
 		>&2 echo "C'est quoi ta putain de distribution de slipologue là ?"
 		exit 126
