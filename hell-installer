@@ -3,20 +3,6 @@
 __HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
 
 function __HELLSCRIPTS_INJECT_FUNS {
-	function __HELLSCRIPTS_APPEND_LOG_SEPARATOR {
-		if [[ $# -ne 1 ]]
-		then
-			return 7
-		fi
-
-		if [[ ! -f "$1" ]]
-		then
-			return 2
-		fi
-
-		sed -i -e '$a\\' "$1"
-	}
-
 	function __HELLSCRIPTS_WRITE_LOGS {
 		if [[ $# -eq 0 ]]
 		then
@@ -35,11 +21,12 @@ function __HELLSCRIPTS_INJECT_FUNS {
 			return 2
 		fi
 
+		echo -e $(date) >> "$__HELL_LOG_FILE"
 		while read l;
 		do
-        	echo $l >> "$__HELL_LOG_FILE" 2>&1
+        	echo -ne $l >> "$__HELL_LOG_FILE" 2>&1
 		done
-		__HELLSCRIPTS_APPEND_LOG_SEPARATOR "$__HELL_LOG_FILE"
+        echo -e "\n\n" >> "$__HELL_LOG_FILE"
 		unset __HELL_LOG_FILE
 	}
 
@@ -50,7 +37,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		function HelLogger {
 			if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
 			then
-				echo -e $(date) | __HELLSCRIPTS_WRITE_LOGS
 				echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS
 			fi
 		}
@@ -58,7 +44,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		function HellErrorLogger {
 			if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
 			then
-				>&2 echo -e $(date) | __HELLSCRIPTS_WRITE_LOGS
 				>&2 echo -e "[HellScripts ERROR] ${@}" | __HELLSCRIPTS_WRITE_LOGS
 			fi
 		}
@@ -69,12 +54,10 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		type HellErrorLogger &> /dev/null && unset -f -- HellErrorLogger
 
 		function HelLogger {
-			echo -e $(date) | __HELLSCRIPTS_WRITE_LOGS
 			echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS
 		}
 
 		function HellErrorLogger {
-			>&2 echo -e $(date) | __HELLSCRIPTS_WRITE_LOGS
 			>&2 echo -e "[HellScripts ERROR] ${@}" | __HELLSCRIPTS_WRITE_LOGS
 		}
 	}
