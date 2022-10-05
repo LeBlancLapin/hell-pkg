@@ -9,12 +9,12 @@ function __HELLSCRIPTS_INJECT_FUNS {
 			return 7
 		fi
 
-		if [[ ! -f $1 ]]
+		if [[ ! -f "$1" ]]
 		then
 			return 2
 		fi
 
-		sed -i -e '$a\' $1
+		sed -i -e '$a\' "$1"
 	}
 
 	function __HELLSCRIPTS_WRITE_LOGS {
