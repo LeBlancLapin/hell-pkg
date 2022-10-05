@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare -a HellPkgManagersArray=("pamac" "pacman" "apt" "dnf" "yum" "zypper")
+declare -a HellPkgManagersArray=("pacman" "pamac" "apt" "dnf" "yum" "zypper")
 
 function cf_hellpkg {
 	if [[ $# -eq 1 ]]
@@ -13,9 +13,9 @@ function cf_hellpkg {
 				then
 					if command -v $x &> /dev/null
 					then
-						sudo $x upgrade $1 || sudo "$HellPkgManagersArray[2]" -S $1
+						sudo $x -S $1 || sudo "$HellPkgManagersArray[2]" upgrade $1
 					else
-						sudo $x install $1 || sudo "$HellPkgManagersArray[2]" -S $1
+						sudo $x -S $1 || sudo "$HellPkgManagersArray[2]" install $1
 					fi
 					return 0
 				else
