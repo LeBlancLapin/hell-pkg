@@ -16,7 +16,12 @@ function cf_hellpkg {
 				else
 					if command -v $x &> /dev/null
 					then
-						sudo $x update $1
+						if [[ $x == "zypper" ]]
+						then
+							sudo $x up $1
+						else
+							sudo $x upgrade $1
+						fi
 					else
 						sudo $x install $1
 					fi
