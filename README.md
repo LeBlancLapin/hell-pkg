@@ -94,6 +94,7 @@ All the bullshit in your world dont concern me; lee ermey
 <cite>S P A M 2</cite>
 By: Ytcracker
 </p>
+
 ---
 
 <p align="center"><em>⚠️ This GitHub repository is NOT endorsed by Satan in any way.</em></p>
