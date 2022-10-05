@@ -4,11 +4,11 @@ declare -a __HELL_PkgManagersArray=("pacman" "pamac" "apt" "dnf" "yum" "zypper")
 
 function __HELL_INFER_PKG_MANAGER {
 	echo -ne ""
-	for x in ${__HELL_PkgManagersArray[@]}
+	for cur_pkg_manager in ${__HELL_PkgManagersArray[@]}
 	do
-		if command -v "$x" &> /dev/null
+		if command -v "$cur_pkg_manager" &> /dev/null
 		then
-			echo -ne "$x"
+			echo -ne "$cur_pkg_manager"
 			break
 		fi
 	done
@@ -35,16 +35,16 @@ then
 
 	if [[ "$__HELL_PKGMANAGER" == "$__HELL_PkgManagersArray" ]]
 	then
-		sudo "$__HELL_PKGMANAGER" "-S" "$__HELL_UPDATE_QUEUE $__HELL_INSTALL_QUEUE" || sudo "pamac" upgrade "$__HELL_UPDATE_QUEUE" &&
-		sudo "pamac" install "$__HELL_INSTALL_QUEUE"
+		sudo "$__HELL_PKGMANAGER" "-S" $__HELL_UPDATE_QUEUE $__HELL_INSTALL_QUEUE || sudo "pamac" upgrade $__HELL_UPDATE_QUEUE &&
+		sudo "pamac" install $__HELL_INSTALL_QUEUE
 	else
 		if [[ "$__HELL_PKGMANAGER" == "$__HELL_PkgManagersArray[6]" ]]
 		then
-			sudo "$__HELL_PKGMANAGER" in "$__HELL_INSTALL_QUEUE"
-			sudo "$__HELL_PKGMANAGER" up "$__HELL_UPDATE_QUEUE"
+			sudo "$__HELL_PKGMANAGER" in $__HELL_INSTALL_QUEUE
+			sudo "$__HELL_PKGMANAGER" up $__HELL_UPDATE_QUEUE
 		else
-			sudo "$__HELL_PKGMANAGER" install "$__HELL_INSTALL_QUEUE"
-			sudo "$__HELL_PKGMANAGER" upgrade "$__HELL_UPDATE_QUEUE"
+			sudo "$__HELL_PKGMANAGER" install $__HELL_INSTALL_QUEUE
+			sudo "$__HELL_PKGMANAGER" upgrade $__HELL_UPDATE_QUEUE
 		fi
 	fi
 else
