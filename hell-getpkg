@@ -3,22 +3,20 @@
 declare -a __HELL_PkgManagersArray=("pacman" "pamac" "apt" "dnf" "yum" "zypper")
 
 function __HELL_INFER_PKG_MANAGER {
-	if [[ $# -eq 1 ]]
-	then
-		for x in ${__HELL_PkgManagersArray[@]}
-		do
-			if command -v "$x" &> /dev/null
-			then
-				return "$x"
-			fi
-		done
-	fi
-	return ""
+	echo -ne ""
+	for x in ${__HELL_PkgManagersArray[@]}
+	do
+		if command -v "$x" &> /dev/null
+		then
+			echo -ne "$x"
+			break
+		fi
+	done
 }
 
 if [[ $# -gt 0 ]]
 then
-	__HELL_PKGMANAGER=__HELL_INFER_PKG_MANAGER
+	__HELL_PKGMANAGER=$(__HELL_INFER_PKG_MANAGER)
 	if [[ -z "${__HELL_PKGMANAGER}" ]]
 	then
 		>&2 echo "Too much slipologistic distro. You're not an artist, you make jingles."
