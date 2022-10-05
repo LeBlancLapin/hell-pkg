@@ -19,7 +19,7 @@ function __HELL_INFER_PKG_MANAGER {
 if [[ $# -gt 0 ]]
 then
 	__HELL_PKGMANAGER=__HELL_INFER_PKG_MANAGER
-	if [ -z "${__HELL_PKGMANAGER}" ];
+	if [[ -z "${__HELL_PKGMANAGER}" ]]
 	then
 		>&2 echo "Too much slipologistic distro. You're not an artist, you make jingles."
 		exit 126
