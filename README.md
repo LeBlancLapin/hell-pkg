@@ -92,8 +92,5 @@ By: Ytcracker
 
 <hr>
 
-<p align="center"><em>⚠️ This GitHub repository is NOT endorsed by Satan in any way.</em></p>
-
-<hr>
-
-<p align="right"><em>Made with ❤️ in a polynomial time.</em></p>
+<p align="center"><em>⚠️ This GitHub repository is NOT endorsed by Satan in any way.<br/>
+Made with ❤️ in a polynomial time.</em></p>
