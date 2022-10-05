@@ -1,146 +1,49 @@
 #!/usr/bin/env zsh
 
-__HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
-__HELL_OLDPWD=$(pwd)
+.hell_source_map
+. hell-installer
+__HELLSCRIPTS_INJECT_FUNS && __HELLSCRIPTS_INJECT_LOGGER
 
-function __HELLSCRIPTS_INJECT_FUNS {
-	function __HELLSCRIPTS_WRITE_LOGS {
-		if [[ $# -eq 0 ]]
-		then
-			__HELL_LOG_FILE="$__HELLSCRIPTS_ATTR[LOGFILE]"
-		else
-			__HELL_LOG_FILE="$1";
-		fi
+# * ... [Submodules injects]
+HelLogger "Injecting submodules"
+set -a
 
-		if [[ $# -gt 1 ]]
-		then
-			return 7
-		fi
+HelLogger "Injecting .hell_zshenv..." &&
+. .hell_zshenv
 
-		if [[ ! -f "$__HELL_LOG_FILE" ]]
-		then
-			return 2
-		fi
+HelLogger "Injecting .describe_hell_zsheffects..." &&
+. .describe_hell_zsheffects
 
-		echo -e $(date) >> "$__HELL_LOG_FILE"
-		while read l;
-		do
-        	echo -ne $l >> "$__HELL_LOG_FILE" 2>&1
-		done
-        echo -e "\n" >> "$__HELL_LOG_FILE"
-		unset __HELL_LOG_FILE
-	}
+HelLogger "Injecting .inject_hell_zsheffects..." &&
+. .inject_hell_zsheffects
 
-	function __HELLSCRIPTS_INJECT_LOGGER {
-		type HelLogger &> /dev/null && unset -f -- HelLogger
-		type HellErrorLogger &> /dev/null && unset -f -- HellErrorLogger
+set +a
+HelLogger "Injecting .hell_gayzsh..." &&
+. .hell_gayzsh
 
-		function HelLogger {
-			if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
-			then
-				echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS
-			fi
-		}
+HelLogger "Injecting .hell_postinstaller..." &&
+. .hell_postinstaller
 
-		function HellErrorLogger {
-			if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
-			then
-				>&2 echo -e "[HellScripts ERROR] ${@}" | __HELLSCRIPTS_WRITE_LOGS
-			fi
-		}
-	}
+HelLogger "Injecting .hell_zsh_aliases..." &&
+. .hell_zsh_aliases
 
-	function __HELLSCRIPTS_INJECT_PHONY_LOGGER {
-		type HelLogger &> /dev/null && unset -f -- HelLogger
-		type HellErrorLogger &> /dev/null && unset -f -- HellErrorLogger
+if ! $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGER_PROPAGATION]
+then
+	HelLogger "Injecting .inject_hell_phony_logger..." &&
+	.inject_hell_phony_logger
+fi
 
-		function HelLogger {
-			echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS
-		}
+cd $__HELL_OLDPWD
+unset __HELL_OLDPWD
 
-		function HellErrorLogger {
-			>&2 echo -e "[HellScripts ERROR] ${@}" | __HELLSCRIPTS_WRITE_LOGS
-		}
-	}
+if $__HELLSCRIPTS_ATTR[ENABLE_QUICKCLEAR_ON_SHELL_POP]
+then
+	reset || clear
+fi
 
-	function __HELLSCRIPTS_ECHO_PATHES {
-		__HELLSCRIPTS_DIRS=$(find $__HELLSCRIPTS_ATTR[REPO_DIR] -type d -not -path "$__HELLSCRIPTS_ATTR[REPO_DIR]/.git*")
-		echo "${__HELLSCRIPTS_DIRS//[$'\t\r\n']/:}:$HOME/.emacs.d/bin"
-		unset __HELLSCRIPTS_DIRS
-	}
+echo "HellScripts startup logs available at -> $__HELLSCRIPTS_ATTR[LOGFILE]"
+echo -e "(Type '__DISPLAY_HELLSCRIPTS_LOGS' if you're a lazybones)\n"
 
-	function __HELL_IS_COMMAND_IMPORTED {
-		if [[ $# -eq 0 ]]
-		then
-			HellErrorLogger "LOL"
-			return 7
-		fi
-
-		for cmd in $@
-		do
-			if ! command -v "$cmd" &> /dev/null
-			then
-				return false
-			fi
-		done
-
-		true
-	}
-
-	function HellRemoteExecution {
-		if [[ $# -eq 0 ]]
-		then
-			HellErrorLogger "What should I hellah remote execute? I don't like riddles."
-			return 7
-		fi
-		(bash <(curl -Ls "$1") "${@: 2}"   ||
-		bash <(wget -qO- "$1") "${@: 2}"  ||
-		bash <(lynx -dump "$1") "${@: 2}" ||
-			HellErrorLogger "Failed to run command!\nRemote URI: $1\nArguments: ${@: 2}") |
-		__HELLSCRIPTS_WRITE_LOGS
-	}
-}
-
-function HELLSCRIPTS_RUN_INSTALLER {
-	__HELLSCRIPTS_INJECT_FUNS
-
-	if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
-	then
-		__HELLSCRIPTS_INJECT_LOGGER
-	else
-		__HELLSCRIPTS_INJECT_PHONY_LOGGER
-	fi
-
-	if ! __HELL_IS_COMMAND_IMPORTED "git"
-	then
-		HelLogger "Installing git..."
-		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "git" && zsh
-	fi
-
-	if ! __HELL_IS_COMMAND_IMPORTED "zsh"
-	then
-		HelLogger "Installing zsh..."
-		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "zsh" && zsh
-	fi
-
-	if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]
-	then
-		HelLogger "Importing HellScripts core..."
-		cd -P ~ &&
-		(git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" `basename "$__HELLSCRIPTS_ATTR[REPO_DIR]"` |
-		__HELLSCRIPTS_WRITE_LOGS) ||
-		__HELLSCRIPTS_INSTALLER_EPIC_FAILED=true;
-	fi
-
-	PATH="$PATH:$(eval __HELLSCRIPTS_ECHO_PATHES)"
-	HelLogger "Updated PATH"
-
-	if $__HELLSCRIPTS_INSTALLER_EPIC_FAILED
-	then
-		HellErrorLogger "Well tried, wkwkwk.\nAre you aware this is just a gitmodule which I made public, but is only an artefact from a several dozens of thousands lines of code project?\nI love u qt."
-	else
-		. .propagate_hell_zshmess
-	fi
-
-	unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED
+function __DISPLAY_HELLSCRIPTS_LOGS {
+	cat $__HELLSCRIPTS_ATTR[LOGFILE]
 }
