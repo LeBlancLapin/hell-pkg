@@ -27,7 +27,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		do
         	echo -ne $l >> "$__HELL_LOG_FILE" 2>&1
 		done
-        echo -e "\n\n" >> "$__HELL_LOG_FILE"
+        echo -e "\n" >> "$__HELL_LOG_FILE"
 		unset __HELL_LOG_FILE
 	}
 
