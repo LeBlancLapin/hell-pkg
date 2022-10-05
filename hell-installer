@@ -3,7 +3,7 @@
 __HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
 
 function __HELLSCRIPTS_INJECT_FUNS {
-	function __HELLSCRIPTS_APPEND_NEW_LINE {
+	function __HELLSCRIPTS_APPEND_LOG_SEPARATOR {
 		if [[ $# -ne 1 ]]
 		then
 			return 7
@@ -14,7 +14,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 			return 2
 		fi
 
-		sed -i -e '$a\' "$1"
+		sed -i -e '$a\\' "$1"
 	}
 
 	function __HELLSCRIPTS_WRITE_LOGS {
@@ -37,11 +37,9 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
 		while read l;
 		do
-		    __HELLSCRIPTS_APPEND_NEW_LINE "$__HELL_LOG_FILE" &&
-        	echo $l >> "$__HELL_LOG_FILE" 2>&1 &&
-			__HELLSCRIPTS_APPEND_NEW_LINE
+		    __HELLSCRIPTS_APPEND_LOG_SEPARATOR &&
+        	echo $l >> "$__HELL_LOG_FILE" 2>&1
 		done
-
 		unset __HELL_LOG_FILE
 	}
 
