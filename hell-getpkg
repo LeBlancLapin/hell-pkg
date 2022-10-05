@@ -25,7 +25,7 @@ then
 
 	for cur_pkg in $@
 	do
-		if command -v "$x" &> /dev/null
+		if command -v "$cur_pkg" &> /dev/null
 		then
 			__HELL_UPDATE_QUEUE="$__HELL_UPDATE_QUEUE $cur_pkg"
 		else
