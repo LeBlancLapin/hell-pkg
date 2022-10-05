@@ -9,9 +9,14 @@ function cf_hellpkg {
 		do
 			if command -v $x &> /dev/null
 			then
-				if [[ $x == "$HellPkgManagersArray[2]" ]]
+				if [[ $x == "$HellPkgManagersArray[1]" ]]
 				then
-					sudo $x -S $1
+					if command -v $x &> /dev/null
+					then
+						sudo $x upgrade $1 || sudo $x -S $1
+					else
+						sudo $x install $1 || sudo $x -S $1
+					fi
 					return 0
 				else
 					if command -v $x &> /dev/null
