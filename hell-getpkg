@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare -ar HellPkgManagersArray=("pamac" "pacman" "apt" "dnf" "yum" "zypper")
+declare -a HellPkgManagersArray=("pamac" "pacman" "apt" "dnf" "yum" "zypper")
 
 function cf_hellpkg {
 	if [[ $# -eq 1 ]]
@@ -67,3 +67,5 @@ else
 	>&2 echo -e "Hello newby, u new to computers?"
 	exit 1
 fi
+
+unset HellPkgManagersArray
