@@ -6,12 +6,12 @@
 
 ---
 
-<p align="center">
+<div align="center">
 <h3>Let's sing!</h3>
 <a href="https://soundcloud.com/ytcracker/s-p-a-m-2">
 <img src="./Assets/click-on-it-and-listen-to-ytcracker.png" alt="Click me and Spam The Nation">
 </a>
-</p>
+</div>
 
 ---
 
