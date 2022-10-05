@@ -1,72 +1,56 @@
 #!/bin/bash
 
-declare -a HellPkgManagersArray=("pacman" "pamac" "apt" "dnf" "yum" "zypper")
+declare -a __HELL_PkgManagersArray=("pacman" "pamac" "apt" "dnf" "yum" "zypper")
 
-function cf_hellpkg {
+function __HELL_INFER_PKG_MANAGER {
 	if [[ $# -eq 1 ]]
 	then
-		for x in ${HellPkgManagersArray[@]}
+		for x in ${__HELL_PkgManagersArray[@]}
 		do
 			if command -v "$x" &> /dev/null
 			then
-				if [[ "$x" == "$HellPkgManagersArray" ]]
-				then
-					if command -v "$1" &> /dev/null
-					then
-						sudo "$x" "-S" "$1" || sudo "pamac" upgrade "$1"
-					else
-						sudo "$x" "-S" "$1" || sudo "pamac" install "$1"
-					fi
-					return 0
-				else
-					if command -v "$1" &> /dev/null
-					then
-						if [[ "$x" == "$HellPkgManagersArray[6]" ]]
-						then
-							sudo "$x" up "$1"
-						else
-							sudo "$x" upgrade "$1"
-						fi
-					else
-						sudo "$x" install "$1"
-					fi
-					return 0
-				fi
+				return "$x"
 			fi
 		done
-	else
-		>&2 echo "Don't fucking arguments list too long with me"
-		return 7
 	fi
-	return 1
-}
-
-function is_slipologue_distro {
-	for x in ${HellPkgManagersArray[@]}
-    do
-		if command -v "$x" &> /dev/null
-        then
-            return 1
-        fi
-	done
-	return 0
+	return ""
 }
 
 if [[ $# -gt 0 ]]
 then
-	if is_slipologue_distro
+	__HELL_PKGMANAGER=__HELL_INFER_PKG_MANAGER
+	if [ -z "${__HELL_PKGMANAGER}" ];
 	then
 		>&2 echo "Too much slipologistic distro. You're not an artist, you make jingles."
 		exit 126
 	fi
 
-	for x in "$@"
-	do
-		cf_hellpkg "$x"
-	done
+	if [[ "$__HELL_PKGMANAGER" == "$__HELL_PkgManagersArray" ]]
+	then
+		if command -v "$x" &> /dev/null
+		then
+			sudo "$__HELL_PKGMANAGER" "-S" "$@" || sudo "pamac" upgrade "$@"
+		else
+			sudo "$__HELL_PKGMANAGER" "-S" "$@" || sudo "pamac" install "$@"
+		fi
+	else
+		if command -v "$1" &> /dev/null
+		then
+			if [[ "$__HELL_PKGMANAGER" == "$__HELL_PkgManagersArray[6]" ]]
+			then
+				sudo "$__HELL_PKGMANAGER" up "$@"
+			else
+				sudo "$__HELL_PKGMANAGER" upgrade "$@"
+			fi
+			else
+				sudo "$__HELL_PKGMANAGER" install "$@"
+			fi
+		fi
+	fi
 else
 	>&2 echo -e "Hello newby, u new to computers?"
 	exit 1
 fi
 
-unset HellPkgManagersArray
+unset __HELL_PkgManagersArray
+unset __HELL_PKGMANAGER
