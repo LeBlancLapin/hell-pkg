@@ -20,7 +20,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 	function __HELLSCRIPTS_WRITE_LOGS {
 		if [[ $# -eq 0 ]]
 		then
-			__HELL_LOG_FILE="$__HELLSCRIPTS_ATTR[LOGFILE]";
+			__HELL_LOG_FILE="$__LOGGER_POC_TMP_FILE"
 		else
 			__HELL_LOG_FILE="$1";
 		fi
@@ -30,13 +30,17 @@ function __HELLSCRIPTS_INJECT_FUNS {
 			return 7
 		fi
 
-		if [[ ! -f $1 ]]
+		if [[ ! -f $__HELL_LOG_FILE ]]
 		then
 			return 2
 		fi
 
-		__HELLSCRIPTS_APPEND_NEW_LINE $__HELL_LOG_FILE
-		tee -a $__HELL_LOG_FILE
+		while read l;
+		do
+			__HELLSCRIPTS_APPEND_NEW_LINE $__HELL_LOG_FILE &&
+			echo $l >> $__HELL_LOG_FILE;
+		done
+
 		unset __HELL_LOG_FILE
 	}
 
