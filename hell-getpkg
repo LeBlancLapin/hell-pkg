@@ -38,11 +38,11 @@ function cf_hellpkg {
 
 function is_slipologue_distro {
 	for x in ${HellPkgManagersArray[@]}
-        do
-			if command -v $x &> /dev/null
-            then
-                return 1
-        	fi
+    do
+		if command -v $x &> /dev/null
+        then
+            return 1
+        fi
 	done
 	return 0
 }
