@@ -51,7 +51,7 @@ if [[ $# -gt 0 ]]
 then
 	if is_slipologue_distro
 	then
-		>&2 echo "Too much slipologue distro. You're not an artist, you make jingles."
+		>&2 echo "Too much slipologistic distro. You're not an artist, you make jingles."
 		exit 126
 	fi
 
