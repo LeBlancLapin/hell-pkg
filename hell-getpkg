@@ -13,9 +13,9 @@ function cf_hellpkg {
 				then
 					if command -v $x &> /dev/null
 					then
-						sudo $x upgrade $1 || sudo $HellPkgManagersArray[2] -S $1
+						sudo $x upgrade $1 || sudo "$HellPkgManagersArray[2]" -S $1
 					else
-						sudo $x install $1 || sudo $HellPkgManagersArray[2] -S $1
+						sudo $x install $1 || sudo "$HellPkgManagersArray[2]" -S $1
 					fi
 					return 0
 				else
