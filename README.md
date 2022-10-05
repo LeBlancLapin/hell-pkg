@@ -16,7 +16,7 @@
 <h4>(SUPER+M1 or 🍎+M1)</h4>
 </div>
 
-<p align="center">
+<div align="center">
 S P A M
 Send it every day get paid and then
 S P A M
@@ -61,11 +61,6 @@ Read between the lines draw conclusions
 Lifting the shroud off these false illusions
 This computer is a weapon of mine
 And i can run the globe in polynomial time
-You might also like
-Bitcoin Baron
-YTCracker
-ОЙДА (OIDA)
-Oxxxymiron
 S P A M
 Send it every day get paid and then
 S P A M
@@ -88,14 +83,17 @@ Messiah of mailing the earl of EPC
 Alpha omicron lambda fraternity
 Shouts to all the people that burned me
 All the bullshit in your world dont concern me; lee ermey
-</p>
+</div>
 
 <p align="right">
 <cite>S P A M 2</cite>
 By: Ytcracker
 </p>
 
----
+<hr>
 
 <p align="center"><em>⚠️ This GitHub repository is NOT endorsed by Satan in any way.</em></p>
+
+<hr>
+
 <p align="right"><em>Made with ❤️ in a polynomial time.</em></p>
