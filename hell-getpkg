@@ -7,20 +7,25 @@ function cf_hellpkg {
 	then
 		for x in ${HellPkgManagersArray[@]}
 		do
-			if [[ -x $(which $x) ]]
+			if command -v $x &> /dev/null
 			then
 				if [[ $x == "pacman" ]]
 				then
 					sudo $x -S $1
 					return 0
 				else
-					sudo $x install $1
+					if command -v $x &> /dev/null
+					then
+						sudo $x update $1
+					else
+						sudo $x install $1
+					fi
 					return 0
 				fi
 			fi
 		done
 	else
-		>&2 echo "Ne donne pas plus d'UN argument, putain de gorille"
+		>&2 echo "Don't fucking arguments list too long with me"
 		return 7
 	fi
 	return 1
@@ -29,9 +34,9 @@ function cf_hellpkg {
 function is_slipologue_distro {
 	for x in ${HellPkgManagersArray[@]}
         do
-        	if [[ -x $(which $x) ]]
-                then
-                	return 1
+			if command -v $x &> /dev/null
+            then
+                return 1
         	fi
 	done
 	return 0
@@ -41,7 +46,7 @@ if [[ $# -gt 0 ]]
 then
 	if is_slipologue_distro
 	then
-		>&2 echo "C'est quoi ta putain de distribution de slipologue là ?"
+		>&2 echo "Too much slipologue distro. You're not an artist, you make jingles."
 		exit 126
 	fi
 
@@ -54,6 +59,6 @@ then
 		fi
 	done
 else
-	>&2 echo -e "Tu veux installer quoi comme programme, espèce de macaque ?\nPense aussi à apprendre à gérer tes sources parce que là ça paraît mal barré."
+	>&2 echo -e "Hello newby, u new to computers?"
 	exit 1
 fi

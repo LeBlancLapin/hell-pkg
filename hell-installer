@@ -6,12 +6,12 @@ function __HELLSCRIPTS_INJECT_FUNS {
 	function __HELLSCRIPTS_APPEND_NEW_LINE {
 		if [[ $# -ne 1 ]]
 		then
-		return 7
+			return 7
 		fi
 
 		if [[ ! -f $1 ]]
 		then
-		return 2
+			return 2
 		fi
 
 		sed -i -e '$a\' $1
@@ -27,12 +27,12 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
 		if [[ $# -gt 1 ]]
 		then
-		return 7
+			return 7
 		fi
 
 		if [[ ! -f $1 ]]
 		then
-		return 2
+			return 2
 		fi
 
 		__HELLSCRIPTS_APPEND_NEW_LINE $__HELL_LOG_FILE
@@ -85,13 +85,13 @@ function __HELLSCRIPTS_INJECT_FUNS {
 	function HellCommandIsImported {
 		if [[ $# -ne 1 ]]
 		then
-		HellErrorLogger "Ne donne pas plus d'UN argument, PUTAIN"
-		return 7
+			HellErrorLogger "Ne donne pas plus d'UN argument, PUTAIN"
+			return 7
 		fi
 
 		if command -v $1 &> /dev/null
 		then
-		return true
+			return true
 		fi
 
 		false
