@@ -30,16 +30,16 @@ function __HELLSCRIPTS_INJECT_FUNS {
 			return 7
 		fi
 
-		if [[ ! -f $__HELL_LOG_FILE ]]
+		if [[ ! -f "$__HELL_LOG_FILE" ]]
 		then
 			return 2
 		fi
 
 		while read l;
 		do
-		    __HELLSCRIPTS_APPEND_LOG_SEPARATOR &&
         	echo $l >> "$__HELL_LOG_FILE" 2>&1
 		done
+		__HELLSCRIPTS_APPEND_LOG_SEPARATOR "$__HELL_LOG_FILE"
 		unset __HELL_LOG_FILE
 	}
 
