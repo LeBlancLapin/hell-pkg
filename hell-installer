@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 
 __HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
+__HELL_OLDPWD=$(pwd)
 
 function __HELLSCRIPTS_INJECT_FUNS {
 	function __HELLSCRIPTS_WRITE_LOGS {
