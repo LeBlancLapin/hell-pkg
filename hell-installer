@@ -35,12 +35,10 @@ function __HELLSCRIPTS_INJECT_FUNS {
 			return 2
 		fi
 
-		tee -a $__HELL_LOG_FILE
-
 		while read l;
 		do
-		        __HELLSCRIPTS_APPEND_NEW_LINE $__HELL_LOG_FILE &&
-        		echo $l >> $__HELL_LOG_FILE &&
+		    __HELLSCRIPTS_APPEND_NEW_LINE "$__HELL_LOG_FILE" &&
+        	echo $l >> "$__HELL_LOG_FILE" 2>&1 &&
 			__HELLSCRIPTS_APPEND_NEW_LINE
 		done
 
