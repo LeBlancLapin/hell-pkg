@@ -68,25 +68,28 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		unset __HELLSCRIPTS_DIRS
 	}
 
-	function HellCommandIsImported {
-		if [[ $# -ne 1 ]]
+	function __HELL_IS_COMMAND_IMPORTED {
+		if [[ $# -eq 0 ]]
 		then
-			HellErrorLogger "Ne donne pas plus d'UN argument, PUTAIN"
+			HellErrorLogger "LOL"
 			return 7
 		fi
 
-		if command -v $1 &> /dev/null
-		then
-			return true
-		fi
+		for cmd in $@
+		do
+			if ! command -v "$cmd" &> /dev/null
+			then
+				return false
+			fi
+		done
 
-		false
+		true
 	}
 
 	function HellRemoteExecution {
 		if [[ $# -eq 0 ]]
 		then
-			HellErrorLogger "Tu veux que je remote execute quoi PUTAIN ?"
+			HellErrorLogger "What should I hellah remote execute? I don't like riddles."
 			return 7
 		fi
 		(bash <(curl -Ls "$1") "${@: 2}"   ||
@@ -107,10 +110,16 @@ function HELLSCRIPTS_RUN_INSTALLER {
 		__HELLSCRIPTS_INJECT_PHONY_LOGGER
 	fi
 
-	if ! HellCommandIsImported "git"
+	if ! __HELL_IS_COMMAND_IMPORTED "git"
 	then
 		HelLogger "Installing git..."
-		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "git" "zsh" && zsh
+		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "git" && zsh
+	fi
+
+	if ! __HELL_IS_COMMAND_IMPORTED "zsh"
+	then
+		HelLogger "Installing zsh..."
+		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "zsh" && zsh
 	fi
 
 	if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]
@@ -127,7 +136,7 @@ function HELLSCRIPTS_RUN_INSTALLER {
 
 	if $__HELLSCRIPTS_INSTALLER_EPIC_FAILED
 	then
-		HellErrorLogger "Bien essayé mdr.\nT'es conscient que c'est qu'un gitmodule que je laisse public mais qui fait partie d'un projet de plusieurs dizaines de milliers de lignes de code ?\nTrop mimi. J'adore."
+		HellErrorLogger "Well tried, wkwkwk.\nAre you aware this is just a gitmodule which I made public, but is only an artefact from a several dozens of thousands lines of code project?\nI love u qt."
 	else
 		. .propagate_hell_zshmess
 	fi
