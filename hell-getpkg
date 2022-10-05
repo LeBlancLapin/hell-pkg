@@ -7,23 +7,21 @@ function cf_hellpkg {
 	then
 		for x in ${HellPkgManagersArray[@]}
 		do
-			if command -v $x &> /dev/null
+			if command -v "$x" &> /dev/null
 			then
-				if [[ $x == "$HellPkgManagersArray[1]" ]]
+				if [[ "$x" == "$HellPkgManagersArray" ]]
 				then
-					if command -v $1 &> /dev/null
+					if command -v "$1" &> /dev/null
 					then
-						echo 'sudo "$x" "-S" "$1"  || sudo "$HellPkgManagersArray[2]" upgrade "$1"'
-						sudo "$x" "-S" "$1" || sudo "$HellPkgManagersArray[2]" upgrade "$1"
+						sudo "$x" "-S" "$1" || sudo "pamac" upgrade "$1"
 					else
-						echo 'sudo "$x" "-S" "$1" || sudo "$HellPkgManagersArray[2]" install "$1"'
-						sudo "$x" "-S" "$1" || sudo "$HellPkgManagersArray[2]" install "$1"
+						sudo "$x" "-S" "$1" || sudo "pamac" install "$1"
 					fi
 					return 0
 				else
-					if command -v $1 &> /dev/null
+					if command -v "$1" &> /dev/null
 					then
-						if [[ $x == "$HellPkgManagersArray[6]" ]]
+						if [[ "$x" == "$HellPkgManagersArray[6]" ]]
 						then
 							sudo "$x" up "$1"
 						else
@@ -46,7 +44,7 @@ function cf_hellpkg {
 function is_slipologue_distro {
 	for x in ${HellPkgManagersArray[@]}
     do
-		if command -v $x &> /dev/null
+		if command -v "$x" &> /dev/null
         then
             return 1
         fi
