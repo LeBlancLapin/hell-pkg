@@ -63,7 +63,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		}
 	}
 
-	function __HELLSCRIPTS_ECHO_PATHES {
+	function __HELLSCRIPTS_FETCH_PATHES {
 		__HELLSCRIPTS_DIRS=$(find $__HELLSCRIPTS_ATTR[REPO_DIR] -type d -not -path "$__HELLSCRIPTS_ATTR[REPO_DIR]/.git*")
 		echo "${__HELLSCRIPTS_DIRS//[$'\t\r\n']/:}:$HOME/.emacs.d/bin"
 		unset __HELLSCRIPTS_DIRS
@@ -132,8 +132,10 @@ function HELLSCRIPTS_RUN_INSTALLER {
 		__HELLSCRIPTS_INSTALLER_EPIC_FAILED=true;
 	fi
 
-	PATH="$PATH:$(eval __HELLSCRIPTS_ECHO_PATHES)"
-	HelLogger "Updated PATH"
+	__HELL_NEW_PATH_ELM=$(eval __HELLSCRIPTS_FETCH_PATHES)
+	PATH="$PATH:$__HELL_NEW_PATH_ELM"
+	HelLogger "Updated PATH with values:\n$__HELL_NEW_PATH_ELM"
+	unset __HELL_NEW_PATH_ELM
 
 	if $__HELLSCRIPTS_INSTALLER_EPIC_FAILED
 	then
