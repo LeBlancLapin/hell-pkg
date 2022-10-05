@@ -41,10 +41,10 @@ function is_slipologue_distro {
         do
 			if command -v $x &> /dev/null
             then
-                return 1
+                return false
         	fi
 	done
-	return 0
+	return true
 }
 
 if [[ $# -gt 0 ]]
