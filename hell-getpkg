@@ -13,8 +13,10 @@ function cf_hellpkg {
 				then
 					if command -v $x &> /dev/null
 					then
+						echo 'sudo "$x" "-S" "$1"  || sudo "$HellPkgManagersArray[2]" upgrade "$1"'
 						sudo "$x" "-S" "$1" || sudo "$HellPkgManagersArray[2]" upgrade "$1"
 					else
+						echo 'sudo "$x" "-S" "$1" || sudo "$HellPkgManagersArray[2]" install "$1"'
 						sudo "$x" "-S" "$1" || sudo "$HellPkgManagersArray[2]" install "$1"
 					fi
 					return 0
