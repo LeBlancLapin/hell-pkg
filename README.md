@@ -12,11 +12,10 @@
 <a href="https://soundcloud.com/ytcracker/s-p-a-m-2" target="_blank">
 <img src="./Assets/click-on-it-and-listen-to-ytcracker.png" alt="Click me and Spam The Nation">
 </a>
-<figcaption>(SUPER+M1 or 🍎+M1)</figcaption>
 </figure>
+<h4>(SUPER+M1 or 🍎+M1)</h4>
 </div>
 
-<figure>
 <p align="center">
 S P A M
 Send it every day get paid and then
@@ -90,9 +89,11 @@ Alpha omicron lambda fraternity
 Shouts to all the people that burned me
 All the bullshit in your world dont concern me; lee ermey
 </p>
-<figcaption><cite>S P A M 2</cite>
-By: Ytcracker</figcaption>
-</figure>
+
+<p align="right">
+<cite>S P A M 2</cite>
+By: Ytcracker
+</p>
 ---
 
 <p align="center"><em>⚠️ This GitHub repository is NOT endorsed by Satan in any way.</em></p>
