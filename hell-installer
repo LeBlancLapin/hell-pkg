@@ -127,7 +127,7 @@ function HELLSCRIPTS_RUN_INSTALLER {
 	then
 		HelLogger "Importing HellScripts core..."
 		cd -P ~ &&
-		(git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" `basename "$__HELLSCRIPTS_ATTR[REPO_DIR]"` |
+		(git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" `basename "$__HELLSCRIPTS_ATTR[REPO_DIR]"` --recursive |
 		__HELLSCRIPTS_WRITE_LOGS) ||
 		__HELLSCRIPTS_INSTALLER_EPIC_FAILED=true;
 	fi
