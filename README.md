@@ -17,73 +17,73 @@
 </div>
 
 <div align="center">
-S P A M
-Send it every day get paid and then
-S P A M
-Load another campaign and do it again
+<span>S P A M<br/>
+Send it every day get paid and then<br/>
+S P A M<br/>
+Load another campaign and do it again<br/><br/>
 
-Been about 11 years since hov dropped this song
-And elevens a lucky number so i had to bring along
-Some mixtape style from ennio morricone
-Thats american for bad pronounciation
-Im a nation up and onto myself
-And im puffin on that el rond, not hubbard, the elf (the forest)
-Dr brule for your health
-Get you some cryptocurrency and start building your wealth
-Had some runins with antis gunnin
-Trying to jack my paper for some texts i sent
-I had that wavecom chipset paying my rent
-Cuz i was SMS spamming the block for events
-But thats past tense had to stop with that outbound
-The spammers in the game knew the day to get out now
-Spamming a little crazy amount now
-NowSMS got em launching on countdown
+Been about 11 years since hov dropped this song<br/>
+And elevens a lucky number so i had to bring along<br/>
+Some mixtape style from ennio morricone<br/>
+Thats american for bad pronounciation<br/>
+Im a nation up and onto myself<br/>
+And im puffin on that el rond, not hubbard, the elf (the forest)<br/>
+Dr brule for your health<br/>
+Get you some cryptocurrency and start building your wealth<br/>
+Had some runins with antis gunnin<br/>
+Trying to jack my paper for some texts i sent<br/>
+I had that wavecom chipset paying my rent<br/>
+Cuz i was SMS spamming the block for events<br/>
+But thats past tense had to stop with that outbound<br/>
+The spammers in the game knew the day to get out now<br/>
+Spamming a little crazy amount now<br/>
+NowSMS got em launching on countdown<br/>
 
-S P A M
-Send it every day get paid and then
-S P A M
-Load another campaign and do it again
+S P A M<br/>
+Send it every day get paid and then<br/>
+S P A M<br/>
+Load another campaign and do it again<br/>
 
-Some hit the inbox they contact mailing
-Some are going super saiyan on the snapchat
-And bot traffic ain't changed a bit since the 90s
-Scripts are just smarter and its harder to bind these
-Sockets correctly can't do it directly
-The proxy requirements are set respectfully
-So newbies in the game got a barrier to entry
-Ain't no one coming straight out of WoW pushing a bentley
+Some hit the inbox they contact mailing<br/>
+Some are going super saiyan on the snapchat<br/>
+And bot traffic ain't changed a bit since the 90s<br/>
+Scripts are just smarter and its harder to bind these<br/>
+Sockets correctly can't do it directly<br/>
+The proxy requirements are set respectfully<br/>
+So newbies in the game got a barrier to entry<br/>
+Ain't no one coming straight out of WoW pushing a bentley<br/><br/>
 
-But im a teacher of tactics spread solution
-To students of the game though the fames elusive
-Im banging crypto when im spitting acoustic
-Cuz this game has got a case of the loose tip
-Read between the lines draw conclusions
-Lifting the shroud off these false illusions
-This computer is a weapon of mine
-And i can run the globe in polynomial time
-S P A M
-Send it every day get paid and then
-S P A M
-Load another campaign and do it again
+But im a teacher of tactics spread solution<br/>
+To students of the game though the fames elusive<br/>
+Im banging crypto when im spitting acoustic<br/>
+Cuz this game has got a case of the loose tip<br/>
+Read between the lines draw conclusions<br/>
+Lifting the shroud off these false illusions<br/>
+This computer is a weapon of mine<br/>
+And i can run the globe in polynomial time<br/>
+S P A M<br/>
+Send it every day get paid and then<br/>
+S P A M<br/>
+Load another campaign and do it again<br/><br/>
 
-All the programs in my taskbar stack hard
-Cuz we mastered the art of the gas card
-The art of the garcinia diet the art of cloaking
-Art of constant contact when your upstreams broken
-And when the fat lady's spoken
-You gotta hit em with that tracking token
-Then retarget em iframe the pages you own
-Circlejerking like a webring on geocities home
+All the programs in my taskbar stack hard<br/>
+Cuz we mastered the art of the gas card<br/>
+The art of the garcinia diet the art of cloaking<br/>
+Art of constant contact when your upstreams broken<br/>
+And when the fat lady's spoken<br/>
+You gotta hit em with that tracking token<br/>
+Then retarget em iframe the pages you own<br/>
+Circlejerking like a webring on geocities home<br/><br/>
 
-Like python turn my print into function
-Turn it into songs that these nerds still bumpin
-Got the soundtrack to inspire the gumption
-In a lost generation of twenty-somethings
-Messiah of mailing the earl of EPC
-Alpha omicron lambda fraternity
-Shouts to all the people that burned me
-All the bullshit in your world dont concern me; lee ermey
-</div>
+Like python turn my print into function<br/>
+Turn it into songs that these nerds still bumpin<br/>
+Got the soundtrack to inspire the gumption<br/>
+In a lost generation of twenty-somethings<br/>
+Messiah of mailing the earl of EPC<br/>
+Alpha omicron lambda fraternity<br/>
+Shouts to all the people that burned me<br/>
+All the bullshit in your world dont concern me; lee ermey<br/>
+</span></div>
 
 <p align="right">
 <cite>S P A M 2</cite>
