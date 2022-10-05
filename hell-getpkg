@@ -35,7 +35,7 @@ then
 
 	if [[ "$__HELL_PKGMANAGER" == "$__HELL_PkgManagersArray" ]]
 	then
-		sudo "$__HELL_PKGMANAGER" "-S" $__HELL_UPDATE_QUEUE $__HELL_INSTALL_QUEUE || sudo "pamac" upgrade $__HELL_UPDATE_QUEUE &&
+		sudo "$__HELL_PKGMANAGER" "-Syu" $__HELL_UPDATE_QUEUE $__HELL_INSTALL_QUEUE || sudo "pamac" upgrade $__HELL_UPDATE_QUEUE &&
 		sudo "pamac" install $__HELL_INSTALL_QUEUE
 	else
 		if [[ "$__HELL_PKGMANAGER" == "$__HELL_PkgManagersArray[6]" ]]
