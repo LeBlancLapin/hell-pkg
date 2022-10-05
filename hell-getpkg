@@ -41,10 +41,10 @@ function is_slipologue_distro {
         do
 			if command -v $x &> /dev/null
             then
-                return false
+                return 1
         	fi
 	done
-	return true
+	return 0
 }
 
 if [[ $# -gt 0 ]]
@@ -57,11 +57,7 @@ then
 
 	for x in "$@"
 	do
-		t=(which $x)
-		if [[ ! -x $t ]]
-		then
-			cf_hellpkg "$x"
-		fi
+		cf_hellpkg "$x"
 	done
 else
 	>&2 echo -e "Hello newby, u new to computers?"
