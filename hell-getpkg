@@ -6,22 +6,18 @@ function __HELL_INFER_PKG_MANAGER {
 	echo -ne ""
 	for cur_pkg_manager in ${__HELL_PkgManagersArray[@]}
 	do
-		if command -v "$cur_pkg_manager" &> /dev/null
-		then
-			echo -ne "$cur_pkg_manager"
+		[[ command -v "$cur_pkg_manager" &> /dev/null ]] &&
+			echo -ne "$cur_pkg_manager" &&
 			break
-		fi
 	done
 }
 
 if [[ $# -gt 0 ]]
 then
 	__HELL_PKGMANAGER=$(__HELL_INFER_PKG_MANAGER)
-	if [[ -z "${__HELL_PKGMANAGER}" ]]
-	then
-		>&2 echo "Too much slipologistic distro. You're not an artist, you make jingles."
+	[[ -z "${__HELL_PKGMANAGER}" ]] &&
+		>&2 echo "Too much slipologistic distro. You're not an artist, you make jingles." &&
 		exit 126
-	fi
 
 	for cur_pkg in $@
 	do
