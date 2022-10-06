@@ -128,7 +128,7 @@ function HELLSCRIPTS_RUN_INSTALLER {
 		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "zsh" && chsh -s /bin/zsh
 	fi
 
-	if [[ ! $(echo $SHELL | grep "zsh") ]]
+	if [[ ! echo $SHELL | grep "zsh" ]]
 	then
 		exec zsh
 	fi
