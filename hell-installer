@@ -108,9 +108,11 @@ function __HELLSCRIPTS_INJECT_FUNS {
 	}
 }
 
-function HELLSCRIPTS_RUN_INSTALLER {
+function __HELLSCRIPTS_RUN_INSTALLER {
 	function __HELL_REGENERATE_HELLMAP {
 		cd -P ~ && rm -f ".zsh_hellmap" &&
+
+# * ... DON'T INDENT, U STUPID BITCH
 cat << EOF > .zsh_hellmap
 set -a
 __HELLSCRIPTS_TMP_FILE=`mktemp`
@@ -138,6 +140,8 @@ declare -Ax __HELLSCRIPTS_ATTR=(
 )
 set +a
 EOF
+
+		. .zsh_hellmap
 	}
 
 	if [[ ! -f "$__HELL_HELLMAP_PATH" ]]
@@ -200,3 +204,13 @@ EOF
 
 	unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED
 }
+
+if [[ $1 == "doINJECT" ]]
+then
+	__HELLSCRIPTS_INJECT_FUNS
+fi
+
+if [[ $1 == "doINSTALL" ]]
+then
+	__HELLSCRIPTS_RUN_INSTALLER
+fi
