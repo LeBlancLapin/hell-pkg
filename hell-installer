@@ -84,8 +84,10 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
 		for cmd in $@
 		do
-			[[ ! command -v "$cmd" &> /dev/null ]] &&
+			if ! command -v "$cmd" &> /dev/null
+			then
 				return false
+			fi
 		done
 
 		true
@@ -145,31 +147,31 @@ EOF
 
 	__HELLSCRIPTS_INJECT_FUNS
 
-	if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
+	if [[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
 	then
 		__HELLSCRIPTS_INJECT_LOGGER
 	else
 		__HELLSCRIPTS_INJECT_PHONY_LOGGER
 	fi
 
-	if [[ ! __HELL_IS_COMMAND_IMPORTED "git" ]]
+	if ! __HELL_IS_COMMAND_IMPORTED "git"
 	then
 		HelLogger "Installing git..." &&
 		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "git"
 	fi
 
-	if [[ ! __HELL_IS_COMMAND_IMPORTED "zsh" ]]
+	if ! __HELL_IS_COMMAND_IMPORTED "zsh"
 	then
 		HelLogger "Installing zsh..." &&
 		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "zsh" && chsh -s /bin/zsh
 
-        if [[ ! $(ps -p $$ | grep zsh) ]]
+		if [[ ! $(ps -p $$ | grep zsh) ]]
 		then
 			exec zsh
 		fi
 	fi
 
-	if [[ ! __HELL_IS_COMMAND_IMPORTED "curl" ]]
+	if ! __HELL_IS_COMMAND_IMPORTED "curl"
 	then
 		HelLogger "Installing curl..." &&
 		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "curl"
@@ -189,7 +191,7 @@ EOF
 	HelLogger "Updated PATH with values: $__HELL_NEW_PATH_ELM"
 	unset __HELL_NEW_PATH_ELM
 
-	if $__HELLSCRIPTS_INSTALLER_EPIC_FAILED
+	if [[ $__HELLSCRIPTS_INSTALLER_EPIC_FAILED ]]
 	then
 		HellErrorLogger "Well tried, wkwkwk.\nAre you aware this is just a gitmodule which I made public, but is only an artefact from a several dozens of thousands lines of code project?\nI love u qt."
 	else
