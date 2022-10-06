@@ -4,6 +4,10 @@ __HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
 __HELL_OLDPWD=$(pwd)
 
 function __HELLSCRIPTS_INJECT_FUNS {
+	function __DISPLAY_HELLSCRIPTS_LOGS {
+		cat $__HELLSCRIPTS_ATTR[LOGFILE]
+	}
+
 	function __HELLSCRIPTS_WRITE_LOGS {
 		if [[ $# -eq 0 ]]
 		then
