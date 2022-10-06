@@ -30,20 +30,20 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		read l
 		if [[ $l ]]
 		then
-			echo -e $(date) >> "$__HELL_LOG_FILE" &&
-			2>&1 echo -ne $l >> "$__HELL_LOG_FILE" &&
-			while read l
-			do
-				echo -ne $l >> "$__HELL_LOG_FILE" 2>&1
-			done
+			echo -e $(date) >> "$__HELL_LOG_FILE"			&&
+				2>&1 echo -ne "${l}" >> "$__HELL_LOG_FILE"		&&
+				while read l
+				do
+					echo -ne "${l}" >> "$__HELL_LOG_FILE" 2>&1
+				done
 		fi
 		echo -e "\n" >> "$__HELL_LOG_FILE"
 		unset __HELL_LOG_FILE
 	}
 
 	function __HELLSCRIPTS_INJECT_LOGGER {
-		type HelLogger &> /dev/null && unset -f -- HelLogger
-		type HellErrorLogger &> /dev/null && unset -f -- HellErrorLogger
+		type HelLogger &> /dev/null			&& unset -f -- HelLogger
+		type HellErrorLogger &> /dev/null	&& unset -f -- HellErrorLogger
 
 		function HelLogger {
 			if [[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
@@ -61,11 +61,9 @@ function __HELLSCRIPTS_INJECT_FUNS {
 	}
 
 	function __HELLSCRIPTS_INJECT_PHONY_LOGGER {
-		type HelLogger &> /dev/null && unset -f -- HelLogger
-		type HellErrorLogger &> /dev/null && unset -f -- HellErrorLogger
-
+		type HelLogger &> /dev/null			&& unset -f -- HelLogger
+		type HellErrorLogger &> /dev/null	&& unset -f -- HellErrorLogger
 		function HelLogger {}
-
 		function HellErrorLogger {}
 	}
 
@@ -78,8 +76,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
 	function __HELL_IS_COMMAND_IMPORTED {
 		if [[ $# -eq 0 ]]
 		then
-			HellErrorLogger "LOL" &&
-			return 7
+			HellErrorLogger "LOL"	&&
+				return 7
 		fi
 
 		for cmd in $@
@@ -96,52 +94,50 @@ function __HELLSCRIPTS_INJECT_FUNS {
 	function HellRemoteExecution {
 		if [[ $# -eq 0 ]]
 		then
-			HellErrorLogger "What should I hellah remote execute? I don't like riddles." &&
-			return 7
+			HellErrorLogger "What should I hellah remote execute? I don't like riddles."	&&
+				return 7
 		fi
 
-		(bash <(curl -Ls "$1") "${@: 2}"  ||
-		bash <(wget -qO- "$1") "${@: 2}"  ||
-		bash <(lynx -dump "$1") "${@: 2}" ||
-			HellErrorLogger "Failed to run command!\nRemote URI: $1\nArguments: ${@: 2}") |
-		__HELLSCRIPTS_WRITE_LOGS
+		(
+			bash <(curl -Ls "$1") "${@: 2}"		||
+			bash <(wget -qO- "$1") "${@: 2}"	||
+			bash <(lynx -dump "$1") "${@: 2}"	||
+				HellErrorLogger "Failed to run command!\nRemote URI: $1\nArguments: ${@: 2}"
+		) | __HELLSCRIPTS_WRITE_LOGS
 	}
 }
 
 function __HELLSCRIPTS_RUN_INSTALLER {
 	function __HELL_REGENERATE_HELLMAP {
-		cd -P ~ && rm -f ".zsh_hellmap" &&
-
-# * ... DON'T INDENT, U STUPID BITCH
-cat << EOF > .zsh_hellmap
-set -a
-__HELLSCRIPTS_TMP_FILE=`mktemp`
-__HELL_REPO_ROOT="$HOME/MyHellScripts"
-declare -Ax __HELLSCRIPTS_ATTR=(
-	["HELL_MODE"]=true
-	["ENABLE_MANJARO_ZSH_PROMPT_STYLE"]=false
-	["ENABLE_MANJARO_ZSH_PROMPT_CONFIG"]=true
-	["ENABLE_HELLSCRIPTS_UPDATE_ON_SHELL_POP"]=true
-	["ENABLE_HELLSCRIPTS_MACKUP_BACKUP_ON_SHELL_POP"]=true
-	["ENABLE_HELLSCRIPTS_LOGGING"]=true
-	["ENABLE_HELLSCRIPTS_LOGGER_PROPAGATION"]=true
-	["ENABLE_SPLASHSCREEN_ON_SHELL_POP"]=true
-	["MY_REMOTE_REPO_URI"]="git@github.com:LeBlancLapin/MyHellScripts.git"
-	["MY_MACKUP_REMOTE_REPO_URI"]="git@github.com:LeBlancLapin/Mackup.git"
-	["PREZTO_REMOTE_REPO_URI"]="https://github.com/sorin-ionescu/prezto.git"
-	["REMOTE_GETPKG_SCRIPT_URI"]="https://raw.githubusercontent.com/LeBlancLapin/hell-pkg/main/hell-getpkg"
-	["REPO_DIR"]="$__HELL_REPO_ROOT"
-	["MACKUP_REPO_DIR"]="$HOME/.config/mackup_backup/Mackup"
-	["PREZTO_REPO_DIR"]="${ZDOTDIR:-$HOME}/.zprezto"
-	["SETUP_FILEPATH"]="$__HELL_REPO_ROOT/sHell/hell-installer"
-	["MACKUP_CONFIG_FILEPATH"]="~/.mackup.cfg"
-	["MEMO_RUNTIME_ERROR"]=false
-	["LOGFILE"]="$__HELLSCRIPTS_TMP_FILE"
-)
-set +a
-EOF
-
-		. .zsh_hellmap
+		rm -f "$__HELL_HELLMAP_PATH"																								 &&
+			touch "$__HELL_HELLMAP_PATH"																							 &&
+			(
+				echo "set -a"																										 &&
+				echo "__HELLSCRIPTS_TMP_FILE=`mktemp`"																				 &&
+				echo "__HELL_REPO_ROOT=\"$HOME/MyHellScripts\"" 																	 &&
+				echo "declare -Ax __HELLSCRIPTS_ATTR=("																				 &&
+				echo "	["HELL_MODE"]=true" 																						 &&
+				echo "	[\"ENABLE_MANJARO_ZSH_PROMPT_STYLE\"]=false" 																 &&
+				echo "	[\"ENABLE_MANJARO_ZSH_PROMPT_CONFIG\"]=true" 																 &&
+				echo "	[\"ENABLE_HELLSCRIPTS_UPDATE_ON_SHELL_POP\"]=true"															 &&
+				echo "	[\"ENABLE_HELLSCRIPTS_MACKUP_BACKUP_ON_SHELL_POP\"]=true"													 &&
+				echo "	[\"ENABLE_HELLSCRIPTS_LOGGING\"]=true"																		 &&
+				echo "	[\"ENABLE_HELLSCRIPTS_LOGGER_PROPAGATION\"]=true"															 &&
+				echo "	[\"ENABLE_SPLASHSCREEN_ON_SHELL_POP\"]=true"																 &&
+				echo "	[\"MY_REMOTE_REPO_URI\"]=\"git@github.com:LeBlancLapin/MyHellScripts.git\""									 &&
+				echo "	[\"MY_MACKUP_REMOTE_REPO_URI\"]=\"git@github.com:LeBlancLapin/Mackup.git\""									 &&
+				echo "	[\"PREZTO_REMOTE_REPO_URI\"]=\"https://github.com/sorin-ionescu/prezto.git\""								 &&
+				echo "	[\"REMOTE_GETPKG_SCRIPT_URI\"]=\"https://raw.githubusercontent.com/LeBlancLapin/hell-pkg/main/hell-getpkg\"" &&
+				echo "	[\"REPO_DIR\"]=\"$__HELL_REPO_ROOT\""																		 &&
+				echo "	[\"MACKUP_REPO_DIR\"]=\"$HOME/.config/mackup_backup/Mackup\""												 &&
+				echo "	[\"PREZTO_REPO_DIR\"]=\"${ZDOTDIR:-$HOME}/.zprezto\""														 &&
+				echo "	[\"SETUP_FILEPATH\"]=\"$__HELL_REPO_ROOT/sHell/hell-installer\""											 &&
+				echo "	[\"MACKUP_CONFIG_FILEPATH\"]=\"~/.mackup.cfg\""																 &&
+				echo "	[\"MEMO_RUNTIME_ERROR\"]=false"																				 &&
+				echo "	[\"LOGFILE\"]=\"$__HELLSCRIPTS_TMP_FILE\""																	 &&
+				echo "set +a"
+			) > "$__HELL_HELLMAP_PATH"																								 &&
+			. "$__HELL_HELLMAP_PATH"
 	}
 
 	if [[ ! -f "$__HELL_HELLMAP_PATH" ]]
@@ -160,14 +156,15 @@ EOF
 
 	if ! __HELL_IS_COMMAND_IMPORTED "git"
 	then
-		HelLogger "Installing git..." &&
-		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "git"
+		HelLogger "Installing git..."	&&
+			HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "git"
 	fi
 
 	if ! __HELL_IS_COMMAND_IMPORTED "zsh"
 	then
-		HelLogger "Installing zsh..." &&
-		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "zsh" && chsh -s /bin/zsh
+		HelLogger "Installing zsh..."											  		&&
+			HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "zsh"	&&
+			chsh -s /bin/zsh
 
 		if [[ ! $(ps -p $$ | grep zsh) ]]
 		then
@@ -177,17 +174,18 @@ EOF
 
 	if ! __HELL_IS_COMMAND_IMPORTED "curl"
 	then
-		HelLogger "Installing curl..." &&
-		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "curl"
+		HelLogger "Installing curl..."	&&
+			HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "curl"
 	fi
 
 	if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]
 	then
-		HelLogger "Importing HellScripts core..." &&
-		cd -P ~ &&
-		(git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" `basename "$__HELLSCRIPTS_ATTR[REPO_DIR]"` --recursive |
-		__HELLSCRIPTS_WRITE_LOGS) ||
-		__HELLSCRIPTS_INSTALLER_EPIC_FAILED=true;
+		HelLogger "Importing HellScripts core..."																			&&
+			cd -P ~																											&&
+			(
+				git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" `basename "$__HELLSCRIPTS_ATTR[REPO_DIR]"` --recursive	|
+				__HELLSCRIPTS_WRITE_LOGS
+			) || __HELLSCRIPTS_INSTALLER_EPIC_FAILED=true;
 	fi
 
 	__HELL_NEW_PATH_ELM=$(eval __HELLSCRIPTS_FETCH_PATHES)
@@ -197,7 +195,10 @@ EOF
 
 	if [[ $__HELLSCRIPTS_INSTALLER_EPIC_FAILED ]]
 	then
-		HellErrorLogger "Well tried, wkwkwk.\nAre you aware this is just a gitmodule which I made public, but is only an artefact from a several dozens of thousands lines of code project?\nI love u qt."
+		HellErrorLogger "Well tried, wkwkwk.\n"
+			"Are you aware this is just a gitmodule which I made public, "
+			"but is only an artefact from a several dozens of thousands lines of code project?\n"
+			"I love u qt."
 	else
 		. .propagate_hell_zshmess
 	fi
@@ -205,12 +206,12 @@ EOF
 	unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED
 }
 
-if [[ $1 == "doINJECT" ]]
+if [[ "$1" == "doINJECT" ]]
 then
 	__HELLSCRIPTS_INJECT_FUNS
 fi
 
-if [[ $1 == "doINSTALL" ]]
+if [[ "$1" == "doINSTALL" ]]
 then
 	__HELLSCRIPTS_RUN_INSTALLER
 fi
