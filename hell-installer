@@ -16,27 +16,22 @@ function __HELLSCRIPTS_INJECT_FUNS {
 			__HELL_LOG_FILE="$1";
 		fi
 
-		if [[ $# -gt 1 ]]
-		then
+		[[ $# -gt 1 ]] &&
 			return 7
-		fi
 
-		if [[ ! -f "$__HELL_LOG_FILE" ]]
-		then
+		[[ ! -f "$__HELL_LOG_FILE" ]] &&
 			return 2
-		fi
 
 		read l
-		if [[ $l ]]
-		then
-			echo -e $(date) >> "$__HELL_LOG_FILE"
-			echo -ne $l >> "$__HELL_LOG_FILE" 2>&1
+		[[ $l ]] &&
+			echo -e $(date) >> "$__HELL_LOG_FILE" &&
+			2>&1 echo -ne $l >> "$__HELL_LOG_FILE" &&
 			while read l
 			do
 				echo -ne $l >> "$__HELL_LOG_FILE" 2>&1
 			done
-		fi
-        echo -e "\n" >> "$__HELL_LOG_FILE"
+
+		echo -e "\n" >> "$__HELL_LOG_FILE"
 		unset __HELL_LOG_FILE
 	}
 
@@ -45,17 +40,13 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		type HellErrorLogger &> /dev/null && unset -f -- HellErrorLogger
 
 		function HelLogger {
-			if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
-			then
+			[[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]] &&
 				$(echo -e "[HellScripts] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS)
-			fi
 		}
 
 		function HellErrorLogger {
-			if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
-			then
+			[[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]] &&
 				$(>&2 echo -e "[HellScripts ERROR] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS)
-			fi
 		}
 	}
 
@@ -75,29 +66,24 @@ function __HELLSCRIPTS_INJECT_FUNS {
 	}
 
 	function __HELL_IS_COMMAND_IMPORTED {
-		if [[ $# -eq 0 ]]
-		then
-			HellErrorLogger "LOL"
+		[[ $# -eq 0 ]] &&
+			HellErrorLogger "LOL" &&
 			return 7
-		fi
 
 		for cmd in $@
 		do
-			if ! command -v "$cmd" &> /dev/null
-			then
+			[[ ! command -v "$cmd" &> /dev/null ]] &&
 				return false
-			fi
 		done
 
 		true
 	}
 
 	function HellRemoteExecution {
-		if [[ $# -eq 0 ]]
-		then
-			HellErrorLogger "What should I hellah remote execute? I don't like riddles."
+		[[ $# -eq 0 ]] &&
+			HellErrorLogger "What should I hellah remote execute? I don't like riddles." &&
 			return 7
-		fi
+
 		(bash <(curl -Ls "$1") "${@: 2}"   ||
 		bash <(wget -qO- "$1") "${@: 2}"  ||
 		bash <(lynx -dump "$1") "${@: 2}" ||
@@ -116,37 +102,26 @@ function HELLSCRIPTS_RUN_INSTALLER {
 		__HELLSCRIPTS_INJECT_PHONY_LOGGER
 	fi
 
-	if ! __HELL_IS_COMMAND_IMPORTED "git"
-	then
-		HelLogger "Installing git..."
+	[[ ! __HELL_IS_COMMAND_IMPORTED "git" ]] &&
+		HelLogger "Installing git..." &&
 		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "git"
-	fi
 
-	if ! __HELL_IS_COMMAND_IMPORTED "zsh"
-	then
-		HelLogger "Installing zsh..."
+	[[ ! __HELL_IS_COMMAND_IMPORTED "zsh" ]] &&
+		HelLogger "Installing zsh..." &&
 		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "zsh" && chsh -s /bin/zsh
-	fi
 
-	if [[ ! (ps -p $$ | grep "zsh") &> /dev/null ]]
-	then
-		exec zsh
-	fi
+        [[ ! $(ps -p $$ | grep zsh) ]] && exec zsh
 
-	if ! __HELL_IS_COMMAND_IMPORTED "curl"
-	then
-		HelLogger "Installing curl..."
+	[[ ! __HELL_IS_COMMAND_IMPORTED "curl" ]] && 
+		HelLogger "Installing curl..." &&
 		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "curl"
-	fi
 
-	if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]
-	then
-		HelLogger "Importing HellScripts core..."
+	[[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]] &&
+		HelLogger "Importing HellScripts core..." &&
 		cd -P ~ &&
 		(git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" `basename "$__HELLSCRIPTS_ATTR[REPO_DIR]"` --recursive |
 		__HELLSCRIPTS_WRITE_LOGS) ||
 		__HELLSCRIPTS_INSTALLER_EPIC_FAILED=true;
-	fi
 
 	__HELL_NEW_PATH_ELM=$(eval __HELLSCRIPTS_FETCH_PATHES)
 	PATH="$PATH:$__HELL_NEW_PATH_ELM"
