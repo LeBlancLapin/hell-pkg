@@ -59,13 +59,9 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		type HelLogger &> /dev/null && unset -f -- HelLogger
 		type HellErrorLogger &> /dev/null && unset -f -- HellErrorLogger
 
-		function HelLogger {
-			$(echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS)
-		}
+		function HelLogger {}
 
-		function HellErrorLogger {
-			$(>&2 echo -e "[HellScripts ERROR] ${@}" | __HELLSCRIPTS_WRITE_LOGS)
-		}
+		function HellErrorLogger {}
 	}
 
 	function __HELLSCRIPTS_FETCH_PATHES {
