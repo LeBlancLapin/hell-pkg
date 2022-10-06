@@ -22,11 +22,15 @@ function __HELLSCRIPTS_INJECT_FUNS {
 			return 2
 		fi
 
-		echo -e $(date) >> "$__HELL_LOG_FILE"
-		while read l;
-		do
-        	echo -ne $l >> "$__HELL_LOG_FILE" 2>&1
-		done
+		if [[ read l ]]
+		then
+			echo -e $(date) >> "$__HELL_LOG_FILE"
+			echo -ne $l >> "$__HELL_LOG_FILE" 2>&1
+			while read l;
+			do
+				echo -ne $l >> "$__HELL_LOG_FILE" 2>&1
+			done
+		fi
         echo -e "\n" >> "$__HELL_LOG_FILE"
 		unset __HELL_LOG_FILE
 	}
