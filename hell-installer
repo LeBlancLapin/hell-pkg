@@ -38,14 +38,14 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		function HelLogger {
 			if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
 			then
-				echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS
+				$(echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS)
 			fi
 		}
 
 		function HellErrorLogger {
 			if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
 			then
-				>&2 echo -e "[HellScripts ERROR] ${@}" | __HELLSCRIPTS_WRITE_LOGS
+				$(>&2 echo -e "[HellScripts ERROR] ${@}" | __HELLSCRIPTS_WRITE_LOGS)
 			fi
 		}
 	}
@@ -55,11 +55,11 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		type HellErrorLogger &> /dev/null && unset -f -- HellErrorLogger
 
 		function HelLogger {
-			echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS
+			$(echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS)
 		}
 
 		function HellErrorLogger {
-			>&2 echo -e "[HellScripts ERROR] ${@}" | __HELLSCRIPTS_WRITE_LOGS
+			$(>&2 echo -e "[HellScripts ERROR] ${@}" | __HELLSCRIPTS_WRITE_LOGS)
 		}
 	}
 
@@ -114,13 +114,19 @@ function HELLSCRIPTS_RUN_INSTALLER {
 	if ! __HELL_IS_COMMAND_IMPORTED "git"
 	then
 		HelLogger "Installing git..."
-		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "git" && zsh
+		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "git"
 	fi
 
 	if ! __HELL_IS_COMMAND_IMPORTED "zsh"
 	then
 		HelLogger "Installing zsh..."
 		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "zsh" && zsh
+	fi
+
+	if ! __HELL_IS_COMMAND_IMPORTED "curl"
+	then
+		HelLogger "Installing curl..."
+		HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "curl"
 	fi
 
 	if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]
