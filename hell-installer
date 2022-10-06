@@ -47,14 +47,14 @@ function __HELLSCRIPTS_INJECT_FUNS {
 		function HelLogger {
 			if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
 			then
-				$(echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS)
+				$(echo -e "[HellScripts] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS)
 			fi
 		}
 
 		function HellErrorLogger {
 			if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
 			then
-				$(>&2 echo -e "[HellScripts ERROR] ${@}" | __HELLSCRIPTS_WRITE_LOGS)
+				$(>&2 echo -e "[HellScripts ERROR] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS)
 			fi
 		}
 	}
