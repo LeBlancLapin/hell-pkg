@@ -307,11 +307,11 @@ function __HELLSCRIPTS_RUN_INSTALLER {
 
     if [[ "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]" ]]
     then
+        __HELLSCRIPTS_SETUP_LOGGER "Injecting HellScripts logger into your Shell env..."
         __HELLSCRIPTS_INJECT_LOGGER
-        __HELLSCRIPTS_LOGGER "Injected HellScripts logger into your Shell env..."
     else
+        __HELLSCRIPTS_SETUP_LOGGER "Injecting a Phony HellScripts logger into your Shell env..."
         __HELLSCRIPTS_INJECT_PHONY_LOGGER
-        __HELLSCRIPTS_LOGGER "Injected a Phony HellScripts logger into your Shell env..."
     fi
 
     __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY "git" "zsh" "curl" "awk"
@@ -320,6 +320,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     then
         __HELLSCRIPTS_CLONE_REPO
     fi
+
     __HELLSCRIPTS_INITIALIZE_ZSH_SESSION
 
     __HELLSCRIPTS_NEW_PATH_ELM=$(eval __HELLSCRIPTS_FETCH_PATHES)
