@@ -85,7 +85,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_WRITE_LOGS..."
     function __HELLSCRIPTS_WRITE_LOGS {
         # * ... Securing the pipe call
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOG_FILE && unset __HELLSCRIPTS_FIRST_BYTE &> /dev/null"
+        __HELLSCRIPTS_LOGGER_CURRENT_FILE=""
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOGGER_CURRENT_FILE && unset __HELLSCRIPTS_LOG_FILE && unset __HELLSCRIPTS_FIRST_BYTE &> /dev/null"
 
         __HELLSCRIPTS_FIRST_BYTE=$(__HELLSCRIPTS_GET_FIRST_BYTE_PIPED)
         __HELLSCRIPTS_FIRST_BYTE=`awk -v first_byte="$__HELLSCRIPTS_FIRST_BYTE" 'BEGIN{printf "%c", first_byte}'`
@@ -98,9 +99,12 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
         if [[ $# -eq 0 ]]
         then
-            __HELLSCRIPTS_LOG_FILE=$(mktemp)
+            if [[ -z "${__HELLSCRIPTS_LOG_FILE}" ]]
+            then
+                __HELLSCRIPTS_LOG_FILE=$(mktemp)
+            fi
         else
-            __HELLSCRIPTS_LOG_FILE="$1";
+            __HELLSCRIPTS_LOGGER_CURRENT_FILE="$1";
         fi
 
         if [[ $# -gt 1 ]]
@@ -108,23 +112,26 @@ function __HELLSCRIPTS_INJECT_FUNS {
             return 7
         fi
 
-        if [[ ! -f "$__HELLSCRIPTS_LOG_FILE" ]]
+        if [[ ! -f "$__HELLSCRIPTS_LOG_FILE" && ! -f "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" ]]
         then
             return 2
         fi
+
+        [[ -z "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" ]] &&
+            __HELLSCRIPTS_LOGGER_CURRENT_FILE=$__HELLSCRIPTS_LOG_FILE
 
         read line
         if [[ "${line}" ]]
         then
             line="$__HELLSCRIPTS_FIRST_BYTE$line"
-            echo -e $(date) >> "$__HELLSCRIPTS_LOG_FILE"
-            2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOG_FILE"
+            echo -e $(date) >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
+            2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
             while read l
             do
-                echo -ne "$line" >> "$__HELLSCRIPTS_LOG_FILE" 2>&1
+                echo -ne "$line" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" 2>&1
             done
         fi
-        echo -e "\n" >> "$__HELLSCRIPTS_LOG_FILE"
+        echo -e "\n" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
     }
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_INJECT_LOGGER..."
