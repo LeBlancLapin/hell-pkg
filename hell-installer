@@ -314,7 +314,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
         __HELLSCRIPTS_LOGGER "Injected a Phony HellScripts logger into your Shell env..."
     fi
 
-    __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY "git" "zsh" "curl"
+    __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY "git" "zsh" "curl" "awk"
     __HELLSCRIPTS_SETUP_LOGGER "Checking if you have imported HellScripts Repo..."
     if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]
     then
