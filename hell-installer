@@ -118,7 +118,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         function __HELLSCRIPTS_LOGGER {
             if [[ "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]" ]]
             then
-                2>&1 $(echo "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS)
+                2>&1 echo "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS
             fi
         }
 
@@ -127,7 +127,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         function __HELLSCRIPTS_ERROR_LOGGER {
             if [[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
             then
-                $(>&2 echo "[HellScripts ERROR] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS)
+                >&2 echo "[HellScripts ERROR] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS
             fi
         }
     }
@@ -301,7 +301,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
 
     if [[ "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]" ]]
     then
-        __HELLSCRIPTS_INJECT_LOGGER
+        __HELLSCRIPTS_INJECT_LOGGER # ToDo: Debug this
         __HELLSCRIPTS_LOGGER "Injected HellScripts logger into your Shell env..."
     else
         __HELLSCRIPTS_INJECT_PHONY_LOGGER
