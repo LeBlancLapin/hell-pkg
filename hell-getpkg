@@ -3,49 +3,54 @@
 declare -a __HELLSCRIPTS_PkgManagersArray=("pacman" "pamac" "apt" "dnf" "yum" "zypper")
 
 function __HELLSCRIPTS_INFER_PKG_MANAGER {
-	echo -ne ""
-	for cur_pkg_manager in ${__HELLSCRIPTS_PkgManagersArray[@]}
-	do
-		[[ command -v "$cur_pkg_manager" &> /dev/null ]] &&
-			echo -ne "$cur_pkg_manager" &&
-			break
-	done
+    echo -ne ""
+    for cur_pkg_manager in ${__HELLSCRIPTS_PkgManagersArray[@]}
+    do
+        if [[ command -v "$cur_pkg_manager" &> /dev/null ]]
+        then
+            echo -ne "$cur_pkg_manager"
+            break
+        fi
+    done
 }
 
 if [[ $# -gt 0 ]]
 then
-	__HELLSCRIPTS_PKGMANAGER=$(__HELLSCRIPTS_INFER_PKG_MANAGER)
-	[[ -z "${__HELLSCRIPTS_PKGMANAGER}" ]] &&
-		>&2 echo "Too much slipologistic distro. You're not an artist, you make jingles." &&
-		exit 126
+    __HELLSCRIPTS_PKGMANAGER=$(__HELLSCRIPTS_INFER_PKG_MANAGER)
+    if [[ -z "${__HELLSCRIPTS_PKGMANAGER}" ]]
+    then
+        >&2 echo "Too much slipologistic distro. You're not an artist, you make jingles." &&
+        exit 126
+    fi
 
-	for cur_pkg in $@
-	do
-		if command -v "$cur_pkg" &> /dev/null
-		then
-			__HELLSCRIPTS_UPDATE_QUEUE="$__HELLSCRIPTS_UPDATE_QUEUE $cur_pkg"
-		else
-			__HELLSCRIPTS_INSTALL_QUEUE="$__HELLSCRIPTS_INSTALL_QUEUE $cur_pkg"
-		fi
-	done
+    for cur_pkg in "$@"
+    do
+        if command -v "$cur_pkg" &> /dev/null
+        then
+            __HELLSCRIPTS_UPDATE_QUEUE="$__HELLSCRIPTS_UPDATE_QUEUE $cur_pkg"
+        else
+            __HELLSCRIPTS_INSTALL_QUEUE="$__HELLSCRIPTS_INSTALL_QUEUE $cur_pkg"
+        fi
+    done
 
-	if [[ "$__HELLSCRIPTS_PKGMANAGER" == "$__HELLSCRIPTS_PkgManagersArray" ]]
-	then
-		sudo "$__HELLSCRIPTS_PKGMANAGER" "-Syu" $__HELLSCRIPTS_UPDATE_QUEUE $__HELLSCRIPTS_INSTALL_QUEUE || sudo "pamac" upgrade $__HELLSCRIPTS_UPDATE_QUEUE &&
-		sudo "pamac" install $__HELLSCRIPTS_INSTALL_QUEUE
-	else
-		if [[ "$__HELLSCRIPTS_PKGMANAGER" == "$__HELLSCRIPTS_PkgManagersArray[6]" ]]
-		then
-			sudo "$__HELLSCRIPTS_PKGMANAGER" in $__HELLSCRIPTS_INSTALL_QUEUE
-			sudo "$__HELLSCRIPTS_PKGMANAGER" up $__HELLSCRIPTS_UPDATE_QUEUE
-		else
-			sudo "$__HELLSCRIPTS_PKGMANAGER" install $__HELLSCRIPTS_INSTALL_QUEUE
-			sudo "$__HELLSCRIPTS_PKGMANAGER" upgrade $__HELLSCRIPTS_UPDATE_QUEUE
-		fi
-	fi
+    if [[ "$__HELLSCRIPTS_PKGMANAGER" == "$__HELLSCRIPTS_PkgManagersArray" ]]
+    then
+        sudo "$__HELLSCRIPTS_PKGMANAGER" "-Syu" $__HELLSCRIPTS_UPDATE_QUEUE $__HELLSCRIPTS_INSTALL_QUEUE ||
+        sudo "pamac" upgrade $__HELLSCRIPTS_UPDATE_QUEUE &&
+        sudo "pamac" install $__HELLSCRIPTS_INSTALL_QUEUE
+    else
+        if [[ "$__HELLSCRIPTS_PKGMANAGER" == "$__HELLSCRIPTS_PkgManagersArray[6]" ]]
+        then
+            sudo "$__HELLSCRIPTS_PKGMANAGER" in $__HELLSCRIPTS_INSTALL_QUEUE
+            sudo "$__HELLSCRIPTS_PKGMANAGER" up $__HELLSCRIPTS_UPDATE_QUEUE
+        else
+            sudo "$__HELLSCRIPTS_PKGMANAGER" install $__HELLSCRIPTS_INSTALL_QUEUE
+            sudo "$__HELLSCRIPTS_PKGMANAGER" upgrade $__HELLSCRIPTS_UPDATE_QUEUE
+        fi
+    fi
 else
-	>&2 echo -e "Hello newby, u new to computers?"
-	exit 1
+    >&2 echo -e "Hello newby, u new to computers?"
+    exit 1
 fi
 
 unset __HELLSCRIPTS_PkgManagersArray
