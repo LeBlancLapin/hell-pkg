@@ -138,7 +138,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
 function __HELLSCRIPTS_RUN_INSTALLER {
     function __HELL_EDIT_ZSHRC {
-        if [[ ! $(cat "$HOME/.zshrc" &>/dev/null | grep "HELLSCRIPTS") ]] {
+        if [[ ! $(cat "$HOME/.zshrc" &>/dev/null | grep "HELLSCRIPTS") ]]
+	then
             touch "$HOME/.zshrc"
             (
                 echo "# [HELLSCRIPTS CONFIG] (uncomment and edit if u wanna ride me)"
@@ -167,8 +168,9 @@ function __HELLSCRIPTS_RUN_INSTALLER {
                 echo -e "\n"
                 echo "    . \"$__HELLSCRIPTS_ATTR[SETUP_FILEPATH]\" \"doINSTALL\""
                 echo "# fi"
-            ) >> $HOME/.zshrc
-        }
+            ) >> "$HOME/.zshrc"
+            __HELL_OPEN_EDITOR "$HOME/.zshrc"
+    	fi
     }
 
     function __HELL_REGENERATE_HELLMAP {
@@ -209,7 +211,6 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     then
         __HELL_REGENERATE_HELLMAP
         __HELL_EDIT_ZSHRC
-        __HELL_OPEN_EDITOR "$HOME/.zshrc"
     fi
 
     . "$__HELL_HELLMAP_PATH"
