@@ -63,6 +63,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         rm -f "$__HELLSCRIPTS_HELLMAP_PATH"
         sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#&/' -i "__HELLSCRIPTS_ZSHRC_PATH"
         sed 's/\(#\)\1\+/\1/g' -i "__HELLSCRIPTS_ZSHRC_PATH"
+        rm -rf __HELLSCRIPTS_FOLDER
         unset __HELLSCRIPTS_ZSHRC_PATH
     }
 
