@@ -43,10 +43,12 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_WRITE_LOGS..."
     function __HELLSCRIPTS_WRITE_LOGS {
+	# * ... Hack in the matrix, securing the pipe call
 	__HELL_FIRST_BYTE=$(dd bs=1 count=1 2>/dev/null | od -t o1 -A n | tr -dc 0-9)
 
         if [[ -z "${__HELL_FIRST_BYTE}" ]]
 	then
+            HellErrorLogger "Piping something nil in __HELLSCRIPTS_WRITE_LOGS is not allowed."
             return 1
 	fi
 
