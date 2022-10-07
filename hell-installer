@@ -27,6 +27,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_OPEN_EDITOR..."
     function __HELLSCRIPTS_OPEN_EDITOR {
+        trap "unset __HELLSCRIPTS_EDITOR_FILES &> /dev/null" EXIT
         if [[ $# -eq 0 ]]
         then
             __HELLSCRIPTS_EDITOR_FILES=""
@@ -41,11 +42,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
         nano "$__HELLSCRIPTS_EDITOR_FILES"       ||
         vi "$__HELLSCRIPTS_EDITOR_FILES"         ||
         ne "$__HELLSCRIPTS_EDITOR_FILES"         ||
-        __HELLSCRIPTS_SETUP_LOGGER "Can't open any editor, configure your EDITOR environment variable." &&
-        unset __HELLSCRIPTS_EDITOR_FILES                                                                &&
+        __HELLSCRIPTS_SETUP_LOGGER "Can't open any editor, configure your EDITOR environment variable."  &&
         return 1
-
-        unset __HELLSCRIPTS_EDITOR_FILES
     }
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_GET_FIRST_BYTE_PIPED..."
@@ -56,6 +54,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_UNINSTALL..."
     function __HELLSCRIPTS_UNINSTALL {
+        trap "unset __HELLSCRIPTS_ZSHRC_PATH &> /dev/null" EXIT
         __HELLSCRIPTS_ZSHRC_PATH="$HOME/.zshrc"
         [[ ! -f "$__HELLSCRIPTS_HELLMAP_PATH" ]] && __HELLSCRIPTS_REGENERATE_HELLMAP
         . "$__HELLSCRIPTS_HELLMAP_PATH"
@@ -64,7 +63,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
         sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#&/' -i "__HELLSCRIPTS_ZSHRC_PATH"
         sed 's/\(#\)\1\+/\1/g' -i "__HELLSCRIPTS_ZSHRC_PATH"
         rm -rf __HELLSCRIPTS_FOLDER
-        unset __HELLSCRIPTS_ZSHRC_PATH
     }
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __DISPLAY_HELLSCRIPTS_LOGS..."
@@ -75,6 +73,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_WRITE_LOGS..."
     function __HELLSCRIPTS_WRITE_LOGS {
         # * ... Securing the pipe call
+        trap "unset __HELLSCRIPTS_LOG_FILE && unset __HELLSCRIPTS_FIRST_BYTE &> /dev/null" EXIT
         __HELLSCRIPTS_FIRST_BYTE=$(__HELLSCRIPTS_GET_FIRST_BYTE_PIPED)
         __HELLSCRIPTS_FIRST_BYTE=`awk -v first_byte="$__HELLSCRIPTS_FIRST_BYTE" 'BEGIN{printf "%c", first_byte}'`
 
@@ -93,13 +92,11 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
         if [[ $# -gt 1 ]]
         then
-            unset __HELLSCRIPTS_FIRST_BYTE
             return 7
         fi
 
         if [[ ! -f "$__HELLSCRIPTS_LOG_FILE" ]]
         then
-            unset __HELLSCRIPTS_FIRST_BYTE
             return 2
         fi
 
@@ -115,8 +112,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
             done
         fi
         echo -e "\n" >> "$__HELLSCRIPTS_LOG_FILE"
-        unset __HELLSCRIPTS_LOG_FILE
-        unset __HELLSCRIPTS_FIRST_BYTE
     }
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_INJECT_LOGGER..."
@@ -153,9 +148,9 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_FETCH_PATHES..."
     function __HELLSCRIPTS_FETCH_PATHES {
+        trap "unset __HELLSCRIPTS_DIRS &> /dev/null" EXIT
         __HELLSCRIPTS_DIRS=$(find $__HELLSCRIPTS_ATTR[REPO_DIR] -type d -not -path "$__HELLSCRIPTS_ATTR[REPO_DIR]/.git*")
         echo "${__HELLSCRIPTS_DIRS//[$'\t\r\n']/:}:$HOME/.emacs.d/bin"
-        unset __HELLSCRIPTS_DIRS
     }
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_IS_COMMAND_IMPORTED..."
@@ -213,6 +208,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 }
 
 function __HELLSCRIPTS_RUN_INSTALLER {
+    trap "unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED && unset __HELLSCRIPTS_NEW_PATH_ELM &> /dev/null" EXIT
     function __HELLSCRIPTS_SETUP_LOGGER {
         if [[ $# -eq 0 ]]
         then
@@ -333,7 +329,6 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     __HELLSCRIPTS_NEW_PATH_ELM=$(eval __HELLSCRIPTS_FETCH_PATHES)
     PATH="$PATH:$__HELLSCRIPTS_NEW_PATH_ELM"
     __HELLSCRIPTS_LOGGER "Updated PATH with values: $__HELLSCRIPTS_NEW_PATH_ELM"
-    unset __HELLSCRIPTS_NEW_PATH_ELM
 
     if $__HELLSCRIPTS_INSTALLER_EPIC_FAILED
     then
@@ -345,8 +340,6 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     else
         . .propagate_hell_zshmess
     fi
-
-    unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED
 }
 
 if [[ $# -eq 0 ]]
