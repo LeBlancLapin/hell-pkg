@@ -275,7 +275,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED
 }
 
-if [[ "$#" -- eq 0 ]]
+if [[ $# -eq 0 ]]
 then
     __HELLSCRIPTS_RUN_INSTALLER
 else
