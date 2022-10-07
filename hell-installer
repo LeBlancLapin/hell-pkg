@@ -30,7 +30,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         then
             __HELLSCRIPTS_EDITOR_FILES=""
         else
-            __HELLSCRIPTS_EDITOR_FILES="$@"
+            __HELLSCRIPTS_EDITOR_FILES="${@}"
         fi
 
         "$EDITOR" "$__HELLSCRIPTS_EDITOR_FILES"  ||
@@ -47,10 +47,16 @@ function __HELLSCRIPTS_INJECT_FUNS {
         unset __HELLSCRIPTS_EDITOR_FILES
     }
 
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_GET_FIRST_BYTE_PIPED..."
+    function __HELLSCRIPTS_GET_FIRST_BYTE_PIPED {
+        # * ... Hack in the matrix
+        return $(dd bs=1 count=1 2>/dev/null | od -t o1 -A n | tr -dc 0-9)
+    }
+
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_UNINSTALL..."
     function __HELLSCRIPTS_UNINSTALL {
         __HELLSCRIPTS_ZSHRC_PATH="$HOME/.zshrc"
-            [[ ! -f $__HELLSCRIPTS_HELLMAP_PATH ]] && __HELLSCRIPTS_REGENERATE_HELLMAP
+            [[ ! -f "$__HELLSCRIPTS_HELLMAP_PATH" ]] && __HELLSCRIPTS_REGENERATE_HELLMAP
             . "$__HELLSCRIPTS_HELLMAP_PATH"
             rm -rf "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]"
             rm -f "$__HELLSCRIPTS_HELLMAP_PATH"
@@ -61,54 +67,55 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
         __HELLSCRIPTS_SETUP_LOGGER "Injecting __DISPLAY_HELLSCRIPTS_LOGS..."
         function __DISPLAY_HELLSCRIPTS_LOGS {
-            cat $__HELLSCRIPTS_ATTR[LOGFILE]
+            cat "$__HELLSCRIPTS_TMP_FILE"
         }
 
         __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_WRITE_LOGS..."
         function __HELLSCRIPTS_WRITE_LOGS {
-        # * ... Hack in the matrix, securing the pipe call
-        __HELLSCRIPTS_FIRST_BYTE=$(dd bs=1 count=1 2>/dev/null | od -t o1 -A n | tr -dc 0-9)
+            # * ... Securing the pipe call
+            __HELLSCRIPTS_FIRST_BYTE=$(__HELLSCRIPTS_GET_FIRST_BYTE_PIPED)
+            __HELLSCRIPTS_FIRST_BYTE=`awk -v first_byte="$__HELLSCRIPTS_FIRST_BYTE" 'BEGIN{printf "%c", first_byte}'`
 
-        if [[ -z "${__HELLSCRIPTS_FIRST_BYTE}" ]]
-        then
-            __HELLSCRIPTS_ERROR_LOGGER "Piping something nil in __HELLSCRIPTS_WRITE_LOGS is not allowed."
-            return 1
-        fi
+            if [[ -z "${__HELLSCRIPTS_FIRST_BYTE}" ]]
+            then
+                __HELLSCRIPTS_ERROR_LOGGER "Piping something nil in __HELLSCRIPTS_WRITE_LOGS is not allowed."
+                return 1
+            fi
 
-        if [[ $# -eq 0 ]]
-        then
-            __HELLSCRIPTS_LOG_FILE="$__HELLSCRIPTS_ATTR[LOGFILE]"
-        else
-            __HELLSCRIPTS_LOG_FILE="$1";
-        fi
+            if [[ $# -eq 0 ]]
+            then
+                __HELLSCRIPTS_LOG_FILE=$(mktemp)
+            else
+                __HELLSCRIPTS_LOG_FILE="$1";
+            fi
 
-        if [[ $# -gt 1 ]]
-        then
+            if [[ $# -gt 1 ]]
+            then
+                unset __HELLSCRIPTS_FIRST_BYTE
+                return 7
+            fi
+
+            if [[ ! -f "$__HELLSCRIPTS_LOG_FILE" ]]
+            then
+                unset __HELLSCRIPTS_FIRST_BYTE
+                return 2
+            fi
+
+            read l
+            if [[ "${l}" ]]
+            then
+                l="$__HELLSCRIPTS_FIRST_BYTE$l"
+                echo -e $(date) >> "$__HELLSCRIPTS_LOG_FILE"     &&
+                2>&1 echo -ne "$l" >> "$__HELLSCRIPTS_LOG_FILE"  &&
+                while read l
+                do
+                    echo -ne "$l" >> "$__HELLSCRIPTS_LOG_FILE" 2>&1
+                done
+            fi
+            echo -e "\n" >> "$__HELLSCRIPTS_LOG_FILE"
+            unset __HELLSCRIPTS_LOG_FILE
             unset __HELLSCRIPTS_FIRST_BYTE
-            return 7
-        fi
-
-        if [[ ! -f "$__HELLSCRIPTS_LOG_FILE" ]]
-        then
-            unset __HELLSCRIPTS_FIRST_BYTE
-            return 2
-        fi
-
-        read l
-        if [[ "${l}" ]]
-        then
-            l="$__HELLSCRIPTS_FIRST_BYTE$l"
-            echo -e $(date) >> "$__HELLSCRIPTS_LOG_FILE"     &&
-            2>&1 echo -ne "$l" >> "$__HELLSCRIPTS_LOG_FILE"  &&
-            while read l
-            do
-                echo -ne "$l" >> "$__HELLSCRIPTS_LOG_FILE" 2>&1
-            done
-        fi
-        echo -e "\n" >> "$__HELLSCRIPTS_LOG_FILE"
-        unset __HELLSCRIPTS_LOG_FILE
-        unset __HELLSCRIPTS_FIRST_BYTE
-    }
+        }
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_INJECT_LOGGER..."
     function __HELLSCRIPTS_INJECT_LOGGER {
@@ -278,7 +285,6 @@ function __HELLSCRIPTS_RUN_INSTALLER {
             echo "    [\"SETUP_FILEPATH\"]=\"$__HELLSCRIPTS_REPO_ROOT/sHell/hell-installer\""                                       &&
             echo "    [\"MACKUP_CONFIG_FILEPATH\"]=\"~/.mackup.cfg\""                                                               &&
             echo "    [\"MEMO_RUNTIME_ERROR\"]=false"                                                                               &&
-            echo "    [\"LOGFILE\"]=\"$__HELLSCRIPTS_TMP_FILE\""                                                                    &&
             echo ")"                                                                                                                &&
             echo "set +a"
         ) >> "$__HELLSCRIPTS_HELLMAP_PATH"
