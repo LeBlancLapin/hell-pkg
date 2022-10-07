@@ -14,13 +14,13 @@ function __HELLSCRIPTS_INJECT_FUNS {
             __HELL_EDITOR_FILES="$@"
         fi
 
-        "$EDITOR" "$__HELL_EDITOR_FILES"    ||
-        vim "$__HELL_EDITOR_FILES"          ||
-        emacs "$__HELL_EDITOR_FILES"        ||
-        vifm "$__HELL_EDITOR_FILES"         ||
-        nano "$__HELL_EDITOR_FILES"         ||
-        vi "$__HELL_EDITOR_FILES"           ||
-        ne "$__HELL_EDITOR_FILES"           ||
+        "$EDITOR" "$__HELL_EDITOR_FILES"  ||
+        vim "$__HELL_EDITOR_FILES"        ||
+        emacs "$__HELL_EDITOR_FILES"      ||
+        vifm "$__HELL_EDITOR_FILES"       ||
+        nano "$__HELL_EDITOR_FILES"       ||
+        vi "$__HELL_EDITOR_FILES"         ||
+        ne "$__HELL_EDITOR_FILES"         ||
         __HELL_SETUP_LOGGER "Can't open any editor, configure your EDITOR environment variable." &&
         unset __HELL_EDITOR_FILES                                                            &&
         return 1
@@ -30,12 +30,14 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_UNINSTALL..."
     function __HELLSCRIPTS_UNINSTALL {
+	__HELL_ZSHRC_PATH="$HOME/.zshrc"
         [[ ! -f $__HELL_HELLMAP_PATH ]] && __HELL_REGENERATE_HELLMAP
         . "$__HELL_HELLMAP_PATH"
         rm -rf "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]"
         rm -f "$__HELL_HELLMAP_PATH"
-	sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#&/' -i "$HOME/.zshrc"
-	sed 's/\(#\)\1\+/\1/g'
+        sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#&/' -i "__HELL_ZSHRC_PATH"
+        sed 's/\(#\)\1\+/\1/g' -i "__HELL_ZSHRC_PATH"
+	unset __HELL_ZSHRC_PATH
     }
 
     __HELL_SETUP_LOGGER "Injecting __DISPLAY_HELLSCRIPTS_LOGS..."
