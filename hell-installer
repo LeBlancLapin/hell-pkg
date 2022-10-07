@@ -2,7 +2,8 @@
 
 __HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
 __HELLSCRIPTS_OLDPWD="$(pwd)"
-__HELLSCRIPTS_HELLMAP_PATH="$HOME/.zsh_hellmap"
+__HELLSCRIPTS_FOLDER="$HOME/.hellscripts"
+__HELLSCRIPTS_HELLMAP_PATH="$__HELLSCRIPTS_FOLDER/.zsh_hellmap"
 
 function __HELLSCRIPTS_INJECT_FUNS {
     function __HELLSCRIPTS_INITIALIZE_ZSH_SESSION {
@@ -229,7 +230,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
             (
                 echo "# [HELLSCRIPTS CONFIG] (uncomment and edit if u wanna ride me)"
                 echo "# __HELLSCRIPTS_TMP_FILE=$(mktemp) # * ... This goes at the top of your .zshrc file # [HELL_CONFIG_LINE]"
-                echo "# . \"$HOME/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file too! # [HELL_CONFIG_LINE]"
+                echo "# . \"$__HELLSCRIPTS_FOLDER/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file too! # [HELL_CONFIG_LINE]"
                 echo -e "\n"
                 echo "# if \"$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_STYLE]\" # [HELL_CONFIG_LINE]"
                 echo "# then # [HELL_CONFIG_LINE]"
@@ -260,12 +261,17 @@ function __HELLSCRIPTS_RUN_INSTALLER {
         fi
     }
 
+    function __HELLSCRIPTS_CREATE_ROOT_DIRECTORY {
+        mkdir "$__HELLSCRIPTS_FOLDER" &>2
+    }
+
     function __HELLSCRIPTS_REGENERATE_HELLMAP {
         __HELLSCRIPTS_SETUP_LOGGER "Building Hellmap anew, reseting your crappy config."
+        __HELLSCRIPTS_CREATE_ROOT_DIRECTORY
         rm -f "$__HELLSCRIPTS_HELLMAP_PATH"
         (
             echo "set -a"                                                                                                           &&
-            echo "__HELLSCRIPTS_REPO_ROOT=\"$HOME/MyHellScripts\""                                                                  &&
+            echo "__HELLSCRIPTS_REPO_ROOT=\"$__HELLSCRIPTS_FOLDER/MyHellScripts\""                                                                  &&
             echo "declare -Ax __HELLSCRIPTS_ATTR=("                                                                                 &&
             echo "    [\"HELL_MODE\"]=true"                                                                                         &&
             echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_STYLE\"]=false"                                                                  &&
