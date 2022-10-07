@@ -34,6 +34,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
         . "$__HELL_HELLMAP_PATH"
         rm -rf "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]"
         rm -f "$__HELL_HELLMAP_PATH"
+	sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#&/' -i "$HOME/.zshrc"
+	sed 's/\(#\)\1\+/\1/g'
     }
 
     __HELL_SETUP_LOGGER "Injecting __DISPLAY_HELLSCRIPTS_LOGS..."
@@ -71,6 +73,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
             return 2
         fi
 
+	echo "go"
         read l
         if [[ "${l}" ]]
         then
@@ -84,6 +87,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         fi
         echo -e "\n" >> "$__HELL_LOG_FILE"
         unset __HELL_LOG_FILE
+        unset __HELL_FIRST_BYTE
     }
 
     __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_INJECT_LOGGER..."
@@ -179,32 +183,32 @@ function __HELLSCRIPTS_RUN_INSTALLER {
             touch "$HOME/.zshrc"
             (
                 echo "# [HELLSCRIPTS CONFIG] (uncomment and edit if u wanna ride me)"
-		echo "# __HELLSCRIPTS_TMP_FILE=$(mktemp) # * ... This goes at the top of your .zshrc file"
-                echo "# . \"$HOME/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file too!"
+		echo "# __HELLSCRIPTS_TMP_FILE=$(mktemp) # * ... This goes at the top of your .zshrc file # [HELL_CONFIG_LINE]"
+                echo "# . \"$HOME/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file too! # [HELL_CONFIG_LINE]"
 		echo -e "\n"
-                echo "# if \"$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_STYLE]\""
-                echo "# then"
-                echo "#     if [[ -e /usr/share/zsh/manjaro-zsh-prompt ]]"
-                echo "#     then"
-                echo "#         . /usr/share/zsh/manjaro-zsh-prompt"
-                echo "#     fi"
-                echo "# fi"
+                echo "# if \"$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_STYLE]\" # [HELL_CONFIG_LINE]"
+                echo "# then # [HELL_CONFIG_LINE]"
+                echo "#     if [[ -e /usr/share/zsh/manjaro-zsh-prompt ]] # [HELL_CONFIG_LINE]"
+                echo "#     then # [HELL_CONFIG_LINE]"
+                echo "#         . /usr/share/zsh/manjaro-zsh-prompt # [HELL_CONFIG_LINE]"
+                echo "#     fi # [HELL_CONFIG_LINE]"
+                echo "# fi # [HELL_CONFIG_LINE]"
                 echo -e "\n"
-                echo "# if \"$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_CONFIG]\""
-                echo "# then"
-                echo "#     USE_POWERLINE=\"true\""
-                echo "#     if [[ -e /usr/share/zsh/manjaro-zsh-config ]]"
-                echo "#     then"
-                echo "#         . /usr/share/zsh/manjaro-zsh-config"
-                echo "#     fi"
-                echo "# fi"
+                echo "# if \"$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_CONFIG]\" # [HELL_CONFIG_LINE]"
+                echo "# then # [HELL_CONFIG_LINE]"
+                echo "#     USE_POWERLINE=\"true\" # [HELL_CONFIG_LINE]"
+                echo "#     if [[ -e /usr/share/zsh/manjaro-zsh-config ]] # [HELL_CONFIG_LINE]"
+                echo "#     then # [HELL_CONFIG_LINE]"
+                echo "#         . /usr/share/zsh/manjaro-zsh-config # [HELL_CONFIG_LINE]"
+                echo "#     fi # [HELL_CONFIG_LINE]"
+                echo "# fi # [HELL_CONFIG_LINE]"
                 echo -e "\n"
-                echo "# if \"$__HELLSCRIPTS_ATTR[HELL_MODE]\""
-                echo "# then"
-                echo "#     echo \"HellScripts startup logs available at -> $__HELLSCRIPTS_TMP_FILE\""
+                echo "# if \"$__HELLSCRIPTS_ATTR[HELL_MODE]\" # [HELL_CONFIG_LINE]"
+                echo "# then # [HELL_CONFIG_LINE]"
+                echo "#     echo \"HellScripts startup logs available at -> $__HELLSCRIPTS_TMP_FILE\" # [HELL_CONFIG_LINE]"
                 echo -e "\n"
-                echo "    . \"$__HELLSCRIPTS_ATTR[SETUP_FILEPATH]\" \"doINSTALL\""
-                echo "# fi"
+                echo "    . \"$__HELLSCRIPTS_ATTR[SETUP_FILEPATH]\" \"doINSTALL\" # [HELL_CONFIG_LINE]"
+                echo "# fi # [HELL_CONFIG_LINE]"
             ) >> "$HOME/.zshrc"
             __HELL_SETUP_LOGGER "Injected HellScripts config sample... Opening Editor."
             __HELL_OPEN_EDITOR "$HOME/.zshrc"
