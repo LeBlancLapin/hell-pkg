@@ -4,8 +4,20 @@ __HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
 __HELLSCRIPTS_OLDPWD="$(pwd)"
 __HELLSCRIPTS_FOLDER="$HOME/.hellscripts"
 __HELLSCRIPTS_HELLMAP_PATH="$__HELLSCRIPTS_FOLDER/.zsh_hellmap"
+__HELL_TRAP_SIGNALS="EXIT SIGKILL SIGINT"
 
 function __HELLSCRIPTS_INJECT_FUNS {
+    function __HELLSCRIPTS_SET_AT_EXIT_TRAP {
+        if [[ $# -eq 0 ]]
+        then
+            return 1
+        fi
+
+        trap "${@}" EXIT SIGKILL SIGINT
+    }
+
+    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELL_TRAP_SIGNALS &> /dev/null"
+
     function __HELLSCRIPTS_INITIALIZE_ZSH_SESSION {
         if [[ ! $(ps -p $$ | grep zsh) ]]
         then
@@ -27,7 +39,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_OPEN_EDITOR..."
     function __HELLSCRIPTS_OPEN_EDITOR {
-        trap "unset __HELLSCRIPTS_EDITOR_FILES &> /dev/null" EXIT
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_EDITOR_FILES &> /dev/null"
         if [[ $# -eq 0 ]]
         then
             __HELLSCRIPTS_EDITOR_FILES=""
@@ -54,7 +66,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_UNINSTALL..."
     function __HELLSCRIPTS_UNINSTALL {
-        trap "unset __HELLSCRIPTS_ZSHRC_PATH &> /dev/null" EXIT
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_ZSHRC_PATH &> /dev/null"
         __HELLSCRIPTS_ZSHRC_PATH="$HOME/.zshrc"
         [[ ! -f "$__HELLSCRIPTS_HELLMAP_PATH" ]] && __HELLSCRIPTS_REGENERATE_HELLMAP
         . "$__HELLSCRIPTS_HELLMAP_PATH"
@@ -73,7 +85,9 @@ function __HELLSCRIPTS_INJECT_FUNS {
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_WRITE_LOGS..."
     function __HELLSCRIPTS_WRITE_LOGS {
         # * ... Securing the pipe call
-        trap "unset __HELLSCRIPTS_LOG_FILE && unset __HELLSCRIPTS_FIRST_BYTE &> /dev/null" EXIT
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOG_FILE && " \
+                                       "unset __HELLSCRIPTS_FIRST_BYTE &> /dev/null"
+
         __HELLSCRIPTS_FIRST_BYTE=$(__HELLSCRIPTS_GET_FIRST_BYTE_PIPED)
         __HELLSCRIPTS_FIRST_BYTE=`awk -v first_byte="$__HELLSCRIPTS_FIRST_BYTE" 'BEGIN{printf "%c", first_byte}'`
 
@@ -148,7 +162,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_FETCH_PATHES..."
     function __HELLSCRIPTS_FETCH_PATHES {
-        trap "unset __HELLSCRIPTS_DIRS &> /dev/null" EXIT
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_DIRS &> /dev/null"
         __HELLSCRIPTS_DIRS=$(find $__HELLSCRIPTS_ATTR[REPO_DIR] -type d -not -path "$__HELLSCRIPTS_ATTR[REPO_DIR]/.git*")
         echo "${__HELLSCRIPTS_DIRS//[$'\t\r\n']/:}:$HOME/.emacs.d/bin"
     }
@@ -208,7 +222,9 @@ function __HELLSCRIPTS_INJECT_FUNS {
 }
 
 function __HELLSCRIPTS_RUN_INSTALLER {
-    trap "unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED && unset __HELLSCRIPTS_NEW_PATH_ELM &> /dev/null" EXIT
+    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED && " \
+                                   "unset __HELLSCRIPTS_NEW_PATH_ELM &> /dev/null"
+
     function __HELLSCRIPTS_SETUP_LOGGER {
         if [[ $# -eq 0 ]]
         then
@@ -263,7 +279,11 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     }
 
     function __HELLSCRIPTS_REGENERATE_HELLMAP {
-        trap "echo 'HHHHHHAAAAAAAAAAAAAAA' && unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED && unset __HELLSCRIPTS_NEW_PATH_ELM && unset __HELLSCRIPTS_REPO_ROOT &> /dev/null" EXIT
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED && "  \
+                                       "unset __HELLSCRIPTS_NEW_PATH_ELM && "           \
+                                       "unset __HELLSCRIPTS_REPO_ROOT"                  \
+                                       "&> /dev/null"
+
         __HELLSCRIPTS_REPO_ROOT="$__HELLSCRIPTS_FOLDER/MyHellScripts"
         __HELLSCRIPTS_SETUP_LOGGER "Building Hellmap anew, reseting your crappy config."
         __HELLSCRIPTS_CREATE_ROOT_DIRECTORY
