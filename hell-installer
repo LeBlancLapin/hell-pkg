@@ -263,12 +263,14 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     }
 
     function __HELLSCRIPTS_REGENERATE_HELLMAP {
+        trap "echo 'HHHHHHAAAAAAAAAAAAAAA' && unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED && unset __HELLSCRIPTS_NEW_PATH_ELM && unset __HELLSCRIPTS_REPO_ROOT &> /dev/null" EXIT
+        __HELLSCRIPTS_REPO_ROOT="$__HELLSCRIPTS_FOLDER/MyHellScripts"
         __HELLSCRIPTS_SETUP_LOGGER "Building Hellmap anew, reseting your crappy config."
         __HELLSCRIPTS_CREATE_ROOT_DIRECTORY
         rm -f "$__HELLSCRIPTS_HELLMAP_PATH"
         (
             echo "set -a"                                                                                                           &&
-            echo "__HELLSCRIPTS_REPO_ROOT=\"$__HELLSCRIPTS_FOLDER/MyHellScripts\""                                                                  &&
+            echo "__HELLSCRIPTS_REPO_ROOT=\"$__HELLSCRIPTS_REPO_ROOT\""                                                                  &&
             echo "declare -Ax __HELLSCRIPTS_ATTR=("                                                                                 &&
             echo "    [\"HELL_MODE\"]=true"                                                                                         &&
             echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_STYLE\"]=false"                                                                  &&
@@ -302,7 +304,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
         __HELLSCRIPTS_EDIT_ZSHRC
     fi
 
-    __HELLSCRIPTS_SETUP_LOGGER "Sourcing HellMap..."
+    __HELLSCRIPTS_SETUP_LOGGER "Sourcing HellMap... -> $__HELLSCRIPTS_HELLMAP_PATH"
     . "$__HELLSCRIPTS_HELLMAP_PATH"
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting HellScripts core functions..."
