@@ -3,7 +3,7 @@
 __HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
 __HELLSCRIPTS_OLDPWD="$(pwd)"
 __HELLSCRIPTS_FOLDER="$HOME/.hellscripts"
-__HELLSCRIPTS_HELLMAP_PATH="$__HELLSCRIPTS_FOLDER/.zsh_hellmap"
+__HELLSCRIPTS_HELLMAP_FILEPATH="$__HELLSCRIPTS_FOLDER/.zsh_hellmap"
 __HELL_TRAP_SIGNALS="EXIT SIGKILL SIGINT"
 
 function __HELLSCRIPTS_SET_AT_EXIT_TRAP {
@@ -68,10 +68,10 @@ function __HELLSCRIPTS_INJECT_FUNS {
     function __HELLSCRIPTS_UNINSTALL {
         __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_ZSHRC_PATH &> /dev/null"
         __HELLSCRIPTS_ZSHRC_PATH="$HOME/.zshrc"
-        [[ ! -f "$__HELLSCRIPTS_HELLMAP_PATH" ]] && __HELLSCRIPTS_REGENERATE_HELLMAP
-        . "$__HELLSCRIPTS_HELLMAP_PATH"
+        [[ ! -f "$__HELLSCRIPTS_HELLMAP_FILEPATH" ]] && __HELLSCRIPTS_REGENERATE_HELLMAP
+        . "$__HELLSCRIPTS_HELLMAP_FILEPATH"
         rm -rf "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]"
-        rm -f "$__HELLSCRIPTS_HELLMAP_PATH"
+        rm -f "$__HELLSCRIPTS_HELLMAP_FILEPATH"
         sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#&/' -i "__HELLSCRIPTS_ZSHRC_PATH"
         sed 's/\(#\)\1\+/\1/g' -i "__HELLSCRIPTS_ZSHRC_PATH"
         rm -rf __HELLSCRIPTS_FOLDER
@@ -285,7 +285,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
         __HELLSCRIPTS_REPO_ROOT="$__HELLSCRIPTS_FOLDER/MyHellScripts"
         __HELLSCRIPTS_SETUP_LOGGER "Building Hellmap anew, reseting your crappy config."
         __HELLSCRIPTS_CREATE_ROOT_DIRECTORY
-        rm -f "$__HELLSCRIPTS_HELLMAP_PATH"
+        rm -f "$__HELLSCRIPTS_HELLMAP_FILEPATH"
         (
             echo "set -a"                                                                                                           &&
             echo "__HELLSCRIPTS_REPO_ROOT=\"$__HELLSCRIPTS_REPO_ROOT\""                                                                  &&
@@ -310,20 +310,20 @@ function __HELLSCRIPTS_RUN_INSTALLER {
             echo "    [\"MEMO_RUNTIME_ERROR\"]=false"                                                                               &&
             echo ")"                                                                                                                &&
             echo "set +a"
-        ) >> "$__HELLSCRIPTS_HELLMAP_PATH"
+        ) >> "$__HELLSCRIPTS_HELLMAP_FILEPATH"
 
         __HELLSCRIPTS_SETUP_LOGGER "Done. See?"
-        cat "$__HELLSCRIPTS_HELLMAP_PATH"
+        cat "$__HELLSCRIPTS_HELLMAP_FILEPATH"
     }
 
-    if [[ ! -f $__HELLSCRIPTS_HELLMAP_PATH ]]
+    if [[ ! -f $__HELLSCRIPTS_HELLMAP_FILEPATH ]]
     then
         __HELLSCRIPTS_REGENERATE_HELLMAP
         __HELLSCRIPTS_EDIT_ZSHRC
     fi
 
-    __HELLSCRIPTS_SETUP_LOGGER "Sourcing HellMap... -> $__HELLSCRIPTS_HELLMAP_PATH"
-    . "$__HELLSCRIPTS_HELLMAP_PATH"
+    __HELLSCRIPTS_SETUP_LOGGER "Sourcing HellMap... -> $__HELLSCRIPTS_HELLMAP_FILEPATH"
+    . "$__HELLSCRIPTS_HELLMAP_FILEPATH"
 
     if [[ "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]" ]]
     then
