@@ -45,17 +45,17 @@ function __HELLSCRIPTS_INJECT_FUNS {
         else
             __HELL_LOG_FILE="$1";
         fi
-        
+
         if [[ $# -gt 1 ]]
         then
             return 7
         fi
-        
+
         if [[ ! -f "$__HELL_LOG_FILE" ]]
         then
             return 2
         fi
-        
+
         read l
         if [[ $l ]]
         then
@@ -69,18 +69,18 @@ function __HELLSCRIPTS_INJECT_FUNS {
         echo -e "\n" >> "$__HELL_LOG_FILE"
         unset __HELL_LOG_FILE
     }
-    
+
     function __HELLSCRIPTS_INJECT_LOGGER {
         type HelLogger &> /dev/null        && unset -f -- HelLogger
         type HellErrorLogger &> /dev/null  && unset -f -- HellErrorLogger
-        
+
         function HelLogger {
             if [[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
             then
                 2>&1 $(printf "[HellScripts] %s" {$@} | __HELLSCRIPTS_WRITE_LOGS)
             fi
         }
-        
+
         function HellErrorLogger {
             if [[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
             then
@@ -88,27 +88,27 @@ function __HELLSCRIPTS_INJECT_FUNS {
             fi
         }
     }
-    
+
     function __HELLSCRIPTS_INJECT_PHONY_LOGGER {
         type HelLogger &> /dev/null        && unset -f -- HelLogger
         type HellErrorLogger &> /dev/null  && unset -f -- HellErrorLogger
         function HelLogger {}
         function HellErrorLogger {}
     }
-    
+
     function __HELLSCRIPTS_FETCH_PATHES {
         __HELLSCRIPTS_DIRS=$(find $__HELLSCRIPTS_ATTR[REPO_DIR] -type d -not -path "$__HELLSCRIPTS_ATTR[REPO_DIR]/.git*")
         echo "${__HELLSCRIPTS_DIRS//[$'\t\r\n']/:}:$HOME/.emacs.d/bin"
         unset __HELLSCRIPTS_DIRS
     }
-    
+
     function __HELL_IS_COMMAND_IMPORTED {
         if [[ $# -eq 0 ]]
         then
             HellErrorLogger "LOL"  &&
             return 7
         fi
-        
+
         for cmd in $@
         do
             if ! command -v "$cmd" &> /dev/null
@@ -116,17 +116,17 @@ function __HELLSCRIPTS_INJECT_FUNS {
                 return false
             fi
         done
-        
+
         true
     }
-    
+
     function HellRemoteExecution {
         if [[ $# -eq 0 ]]
         then
             HellErrorLogger "What should I hellah remote execute? I'm not designed to handle riddles."  &&
             return 7
         fi
-        
+
         (
             bash <(curl -Ls "$1") "${@: 2}"    ||
             bash <(wget -qO- "$1") "${@: 2}"   ||
@@ -214,27 +214,27 @@ function __HELLSCRIPTS_RUN_INSTALLER {
 
     . "$__HELL_HELLMAP_PATH"
     __HELLSCRIPTS_INJECT_FUNS
-    
+
     if [[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
     then
         __HELLSCRIPTS_INJECT_LOGGER
     else
         __HELLSCRIPTS_INJECT_PHONY_LOGGER
     fi
-    
+
     if ! __HELL_IS_COMMAND_IMPORTED "git"
     then
         HelLogger "Installing git..."  &&
         HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "git"
     fi
-    
+
     if ! __HELL_IS_COMMAND_IMPORTED "zsh"
     then
         HelLogger "Installing zsh..."                                              &&
         HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "zsh"  &&
         chsh -s /bin/zsh
     fi
-    
+
     if ! __HELL_IS_COMMAND_IMPORTED "curl"
     then
         HelLogger "Installing curl..."  &&
@@ -249,19 +249,19 @@ function __HELLSCRIPTS_RUN_INSTALLER {
 
     if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]
     then
-        HelLogger "Importing HellScripts core..."                                                                       &&
-        cd -P ~                                                                                                         &&
+        HelLogger "Importing HellScripts core..."  &&
+        cd -P ~                                    &&
         (
-            git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" `basename "$__HELLSCRIPTS_ATTR[REPO_DIR]"` --recursive  |
+            git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" `basename "$__HELLSCRIPTS_ATTR[REPO_DIR]"` --recurse-submodules |
             __HELLSCRIPTS_WRITE_LOGS
         ) || __HELLSCRIPTS_INSTALLER_EPIC_FAILED=true;
     fi
-    
+
     __HELL_NEW_PATH_ELM=$(eval __HELLSCRIPTS_FETCH_PATHES)
     PATH="$PATH:$__HELL_NEW_PATH_ELM"
     HelLogger "Updated PATH with values: $__HELL_NEW_PATH_ELM"
     unset __HELL_NEW_PATH_ELM
-    
+
     if [[ $__HELLSCRIPTS_INSTALLER_EPIC_FAILED ]]
     then
         HellErrorLogger "\nWell tried, wkwkwk.\n" \
@@ -271,7 +271,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     else
         . .propagate_hell_zshmess
     fi
-    
+
     unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED
 }
 
