@@ -6,16 +6,16 @@ __HELLSCRIPTS_FOLDER="$HOME/.hellscripts"
 __HELLSCRIPTS_HELLMAP_PATH="$__HELLSCRIPTS_FOLDER/.zsh_hellmap"
 __HELL_TRAP_SIGNALS="EXIT SIGKILL SIGINT"
 
+function __HELLSCRIPTS_SET_AT_EXIT_TRAP {
+    if [[ $# -eq 0 ]]
+    then
+        return 1
+    fi
+
+    trap "${@}" EXIT SIGKILL SIGINT
+}
+
 function __HELLSCRIPTS_INJECT_FUNS {
-    function __HELLSCRIPTS_SET_AT_EXIT_TRAP {
-        if [[ $# -eq 0 ]]
-        then
-            return 1
-        fi
-
-        trap "${@}" EXIT SIGKILL SIGINT
-    }
-
     __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELL_TRAP_SIGNALS &> /dev/null"
 
     function __HELLSCRIPTS_INITIALIZE_ZSH_SESSION {
@@ -32,7 +32,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         __HELLSCRIPTS_LOGGER "Importing HellScripts core..."
         cd -P ~  &&
         (
-            git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" `basename "$__HELLSCRIPTS_ATTR[REPO_DIR]"` --recurse-submodules |
+            git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" "$__HELLSCRIPTS_ATTR[REPO_DIR]" --recurse-submodules |
             __HELLSCRIPTS_WRITE_LOGS
         ) || __HELLSCRIPTS_INSTALLER_EPIC_FAILED=true
     }
@@ -85,8 +85,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_WRITE_LOGS..."
     function __HELLSCRIPTS_WRITE_LOGS {
         # * ... Securing the pipe call
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOG_FILE && " \
-                                       "unset __HELLSCRIPTS_FIRST_BYTE &> /dev/null"
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOG_FILE && unset __HELLSCRIPTS_FIRST_BYTE &> /dev/null"
 
         __HELLSCRIPTS_FIRST_BYTE=$(__HELLSCRIPTS_GET_FIRST_BYTE_PIPED)
         __HELLSCRIPTS_FIRST_BYTE=`awk -v first_byte="$__HELLSCRIPTS_FIRST_BYTE" 'BEGIN{printf "%c", first_byte}'`
@@ -222,9 +221,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
 }
 
 function __HELLSCRIPTS_RUN_INSTALLER {
-    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED && " \
-                                   "unset __HELLSCRIPTS_NEW_PATH_ELM &> /dev/null"
-
     function __HELLSCRIPTS_SETUP_LOGGER {
         if [[ $# -eq 0 ]]
         then
@@ -232,6 +228,11 @@ function __HELLSCRIPTS_RUN_INSTALLER {
         fi
         echo "[HellScripts Amnesic Setup Logger]" "${@}"
     }
+
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting HellScripts core functions..."
+    __HELLSCRIPTS_INJECT_FUNS
+
+    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_NEW_PATH_ELM &> /dev/null"
 
     __HELLSCRIPTS_SETUP_LOGGER "Initializing Setup..."
     function __HELLSCRIPTS_EDIT_ZSHRC {
@@ -279,10 +280,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     }
 
     function __HELLSCRIPTS_REGENERATE_HELLMAP {
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED && "  \
-                                       "unset __HELLSCRIPTS_NEW_PATH_ELM && "           \
-                                       "unset __HELLSCRIPTS_REPO_ROOT"                  \
-                                       "&> /dev/null"
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_NEW_PATH_ELM && unset __HELLSCRIPTS_REPO_ROOT && unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED &> /dev/null"
 
         __HELLSCRIPTS_REPO_ROOT="$__HELLSCRIPTS_FOLDER/MyHellScripts"
         __HELLSCRIPTS_SETUP_LOGGER "Building Hellmap anew, reseting your crappy config."
@@ -326,9 +324,6 @@ function __HELLSCRIPTS_RUN_INSTALLER {
 
     __HELLSCRIPTS_SETUP_LOGGER "Sourcing HellMap... -> $__HELLSCRIPTS_HELLMAP_PATH"
     . "$__HELLSCRIPTS_HELLMAP_PATH"
-
-    __HELLSCRIPTS_SETUP_LOGGER "Injecting HellScripts core functions..."
-    __HELLSCRIPTS_INJECT_FUNS
 
     if [[ "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]" ]]
     then
