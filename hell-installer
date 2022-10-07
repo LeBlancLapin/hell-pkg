@@ -307,7 +307,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
 
     if [[ "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]" ]]
     then
-        __HELLSCRIPTS_INJECT_LOGGER # ToDo: Debug this
+        __HELLSCRIPTS_INJECT_LOGGER
         __HELLSCRIPTS_LOGGER "Injected HellScripts logger into your Shell env..."
     else
         __HELLSCRIPTS_INJECT_PHONY_LOGGER
