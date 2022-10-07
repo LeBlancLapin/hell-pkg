@@ -259,7 +259,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     }
 
     function __HELLSCRIPTS_CREATE_ROOT_DIRECTORY {
-        mkdir "$__HELLSCRIPTS_FOLDER" &>2
+        mkdir "$__HELLSCRIPTS_FOLDER" &> /dev/null
     }
 
     function __HELLSCRIPTS_REGENERATE_HELLMAP {
