@@ -1,77 +1,109 @@
 #!/usr/bin/env zsh
 
 __HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
-__HELL_OLDPWD=$(pwd)
-__HELL_HELLMAP_PATH="$HOME/.zsh_hellmap"
+__HELLSCRIPTS_OLDPWD=$(pwd)
+__HELLSCRIPTS_HELLMAP_PATH="$HOME/.zsh_hellmap"
 
 function __HELLSCRIPTS_INJECT_FUNS {
-    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_OPEN_EDITOR..."
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY..."
+    function __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY {
+        [[ $# -eq 0 ]] &&
+            __HELLSCRIPTS_ERROR_LOGGER "U forgot to specify which dependency you would like to append.\nYou drunk?" &&
+            return 1
+
+        for pkg in $@
+        do
+            if [[ ! __HELLSCRIPTS_IS_COMMAND_IMPORTED "$pkg" ]]
+            then
+                __HELLSCRIPTS_LOGGER "Installing $pkg..."  &&
+                HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "$pkg"
+            fi
+        done
+    }
+
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_CLONE_REPO..."
+    function __HELLSCRIPTS_CLONE_REPO {
+        __HELLSCRIPTS_LOGGER "Importing HellScripts core..."  &&
+        cd -P ~                                               &&
+        (
+            git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" `basename "$__HELLSCRIPTS_ATTR[REPO_DIR]"` --recurse-submodules |
+            __HELLSCRIPTS_WRITE_LOGS
+        ) || __HELLSCRIPTS_INSTALLER_EPIC_FAILED=true
+    }
+
+    __HELLSCRIPTS_SETUP_LOGGER "Checking if you have imported HellScripts Repo..."
+    if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]
+    then
+        __HELLSCRIPTS_CLONE_REPO
+    fi
+
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_OPEN_EDITOR..."
     function __HELLSCRIPTS_OPEN_EDITOR {
         if [[ $# -eq 0 ]]
         then
-            __HELL_EDITOR_FILES=""
+            __HELLSCRIPTS_EDITOR_FILES=""
         else
-            __HELL_EDITOR_FILES="$@"
+            __HELLSCRIPTS_EDITOR_FILES="$@"
         fi
 
-        "$EDITOR" "$__HELL_EDITOR_FILES"  ||
-        vim "$__HELL_EDITOR_FILES"        ||
-        emacs "$__HELL_EDITOR_FILES"      ||
-        vifm "$__HELL_EDITOR_FILES"       ||
-        nano "$__HELL_EDITOR_FILES"       ||
-        vi "$__HELL_EDITOR_FILES"         ||
-        ne "$__HELL_EDITOR_FILES"         ||
-        __HELL_SETUP_LOGGER "Can't open any editor, configure your EDITOR environment variable." &&
-        unset __HELL_EDITOR_FILES                                                            &&
+        "$EDITOR" "$__HELLSCRIPTS_EDITOR_FILES"  ||
+        vim "$__HELLSCRIPTS_EDITOR_FILES"        ||
+        emacs "$__HELLSCRIPTS_EDITOR_FILES"      ||
+        vifm "$__HELLSCRIPTS_EDITOR_FILES"       ||
+        nano "$__HELLSCRIPTS_EDITOR_FILES"       ||
+        vi "$__HELLSCRIPTS_EDITOR_FILES"         ||
+        ne "$__HELLSCRIPTS_EDITOR_FILES"         ||
+        __HELLSCRIPTS_SETUP_LOGGER "Can't open any editor, configure your EDITOR environment variable." &&
+        unset __HELLSCRIPTS_EDITOR_FILES                                                                &&
         return 1
 
-        unset __HELL_EDITOR_FILES
+        unset __HELLSCRIPTS_EDITOR_FILES
     }
 
-    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_UNINSTALL..."
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_UNINSTALL..."
     function __HELLSCRIPTS_UNINSTALL {
-	__HELL_ZSHRC_PATH="$HOME/.zshrc"
-        [[ ! -f $__HELL_HELLMAP_PATH ]] && __HELL_REGENERATE_HELLMAP
-        . "$__HELL_HELLMAP_PATH"
+	__HELLSCRIPTS_ZSHRC_PATH="$HOME/.zshrc"
+        [[ ! -f $__HELLSCRIPTS_HELLMAP_PATH ]] && __HELLSCRIPTS_REGENERATE_HELLMAP
+        . "$__HELLSCRIPTS_HELLMAP_PATH"
         rm -rf "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]"
-        rm -f "$__HELL_HELLMAP_PATH"
-        sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#&/' -i "__HELL_ZSHRC_PATH"
-        sed 's/\(#\)\1\+/\1/g' -i "__HELL_ZSHRC_PATH"
-	unset __HELL_ZSHRC_PATH
+        rm -f "$__HELLSCRIPTS_HELLMAP_PATH"
+        sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#&/' -i "__HELLSCRIPTS_ZSHRC_PATH"
+        sed 's/\(#\)\1\+/\1/g' -i "__HELLSCRIPTS_ZSHRC_PATH"
+	unset __HELLSCRIPTS_ZSHRC_PATH
     }
 
-    __HELL_SETUP_LOGGER "Injecting __DISPLAY_HELLSCRIPTS_LOGS..."
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __DISPLAY_HELLSCRIPTS_LOGS..."
     function __DISPLAY_HELLSCRIPTS_LOGS {
         cat $__HELLSCRIPTS_ATTR[LOGFILE]
     }
 
-    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_WRITE_LOGS..."
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_WRITE_LOGS..."
     function __HELLSCRIPTS_WRITE_LOGS {
 	# * ... Hack in the matrix, securing the pipe call
-	__HELL_FIRST_BYTE=$(dd bs=1 count=1 2>/dev/null | od -t o1 -A n | tr -dc 0-9)
+	__HELLSCRIPTS_FIRST_BYTE=$(dd bs=1 count=1 2>/dev/null | od -t o1 -A n | tr -dc 0-9)
 
-        if [[ -z "${__HELL_FIRST_BYTE}" ]]
+        if [[ -z "${__HELLSCRIPTS_FIRST_BYTE}" ]]
 	then
-            HellErrorLogger "Piping something nil in __HELLSCRIPTS_WRITE_LOGS is not allowed."
+            __HELLSCRIPTS_ERROR_LOGGER "Piping something nil in __HELLSCRIPTS_WRITE_LOGS is not allowed."
             return 1
 	fi
 
         if [[ $# -eq 0 ]]
         then
-            __HELL_LOG_FILE="$__HELLSCRIPTS_ATTR[LOGFILE]"
+            __HELLSCRIPTS_LOG_FILE="$__HELLSCRIPTS_ATTR[LOGFILE]"
         else
-            __HELL_LOG_FILE="$1";
+            __HELLSCRIPTS_LOG_FILE="$1";
         fi
 
         if [[ $# -gt 1 ]]
         then
-            unset __HELL_FIRST_BYTE
+            unset __HELLSCRIPTS_FIRST_BYTE
             return 7
         fi
 
-        if [[ ! -f "$__HELL_LOG_FILE" ]]
+        if [[ ! -f "$__HELLSCRIPTS_LOG_FILE" ]]
         then
-            unset __HELL_FIRST_BYTE
+            unset __HELLSCRIPTS_FIRST_BYTE
             return 2
         fi
 
@@ -79,34 +111,34 @@ function __HELLSCRIPTS_INJECT_FUNS {
         read l
         if [[ "${l}" ]]
         then
-            l="$__HELL_FIRST_BYTE$l"
-            echo -e $(date) >> "$__HELL_LOG_FILE"     &&
-            2>&1 echo -ne "$l" >> "$__HELL_LOG_FILE"  &&
+            l="$__HELLSCRIPTS_FIRST_BYTE$l"
+            echo -e $(date) >> "$__HELLSCRIPTS_LOG_FILE"     &&
+            2>&1 echo -ne "$l" >> "$__HELLSCRIPTS_LOG_FILE"  &&
             while read l
             do
-                echo -ne "$l" >> "$__HELL_LOG_FILE" 2>&1
+                echo -ne "$l" >> "$__HELLSCRIPTS_LOG_FILE" 2>&1
             done
         fi
-        echo -e "\n" >> "$__HELL_LOG_FILE"
-        unset __HELL_LOG_FILE
-        unset __HELL_FIRST_BYTE
+        echo -e "\n" >> "$__HELLSCRIPTS_LOG_FILE"
+        unset __HELLSCRIPTS_LOG_FILE
+        unset __HELLSCRIPTS_FIRST_BYTE
     }
 
-    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_INJECT_LOGGER..."
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_INJECT_LOGGER..."
     function __HELLSCRIPTS_INJECT_LOGGER {
-        type HelLogger &> /dev/null        && unset -f -- HelLogger
-        type HellErrorLogger &> /dev/null  && unset -f -- HellErrorLogger
+        type __HELLSCRIPTS_LOGGER &> /dev/null        && unset -f -- __HELLSCRIPTS_LOGGER
+        type __HELLSCRIPTS_ERROR_LOGGER &> /dev/null  && unset -f -- __HELLSCRIPTS_ERROR_LOGGER
 
-        function HelLogger {
+        function __HELLSCRIPTS_LOGGER {
             if [[ "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]" ]]
             then
                 2>&1 $(echo "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS)
             fi
         }
 
-        HelLogger "Injected __HELLSCRIPTS_LOGGER..."
-        HelLogger "Injecting __HELLSCRIPTS_ERROR_LOGGER..."
-        function HellErrorLogger {
+        __HELLSCRIPTS_LOGGER "Injected __HELLSCRIPTS_LOGGER..."
+        __HELLSCRIPTS_LOGGER "Injecting __HELLSCRIPTS_ERROR_LOGGER..."
+        function __HELLSCRIPTS_ERROR_LOGGER {
             if [[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
             then
                 $(>&2 echo "[HellScripts ERROR] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS)
@@ -114,28 +146,28 @@ function __HELLSCRIPTS_INJECT_FUNS {
         }
     }
 
-    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_INJECT_PHONY_LOGGER..."
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_INJECT_PHONY_LOGGER..."
     function __HELLSCRIPTS_INJECT_PHONY_LOGGER {
-        type HelLogger &> /dev/null        && unset -f -- HelLogger
-        type HellErrorLogger &> /dev/null  && unset -f -- HellErrorLogger
-        __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_LOGGER (Name squatting: Phony function)..."  &&
-        __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_ERROR_LOGGER (Name squatting: Phony function)..."
-        function HelLogger {}
-        function HellErrorLogger {}
+        type __HELLSCRIPTS_LOGGER &> /dev/null        && unset -f -- __HELLSCRIPTS_LOGGER
+        type __HELLSCRIPTS_ERROR_LOGGER &> /dev/null  && unset -f -- __HELLSCRIPTS_ERROR_LOGGER
+        __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_LOGGER (Name squatting: Phony function)..."  &&
+        __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_ERROR_LOGGER (Name squatting: Phony function)..."
+        function __HELLSCRIPTS_LOGGER {}
+        function __HELLSCRIPTS_ERROR_LOGGER {}
     }
 
-    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_FETCH_PATHES..."
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_FETCH_PATHES..."
     function __HELLSCRIPTS_FETCH_PATHES {
         __HELLSCRIPTS_DIRS=$(find $__HELLSCRIPTS_ATTR[REPO_DIR] -type d -not -path "$__HELLSCRIPTS_ATTR[REPO_DIR]/.git*")
         echo "${__HELLSCRIPTS_DIRS//[$'\t\r\n']/:}:$HOME/.emacs.d/bin"
         unset __HELLSCRIPTS_DIRS
     }
 
-    __HELL_SETUP_LOGGER "Injecting __HELL_IS_COMMAND_IMPORTED..."
-    function __HELL_IS_COMMAND_IMPORTED {
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_IS_COMMAND_IMPORTED..."
+    function __HELLSCRIPTS_IS_COMMAND_IMPORTED {
         if [[ $# -eq 0 ]]
         then
-            HellErrorLogger "LOL"  &&
+            __HELLSCRIPTS_ERROR_LOGGER "LOL"  &&
             return 7
         fi
 
@@ -150,11 +182,11 @@ function __HELLSCRIPTS_INJECT_FUNS {
         true
     }
 
-    __HELL_SETUP_LOGGER "Injecting __HELL_REMOTE_EXECUTION..."
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_REMOTE_EXECUTION..."
     function HellRemoteExecution {
         if [[ $# -eq 0 ]]
         then
-            HellErrorLogger "What should I hellah remote execute? I'm not designed to handle riddles."  &&
+            __HELLSCRIPTS_ERROR_LOGGER "What should I hellah remote execute? I'm not designed to handle riddles."  &&
             return 7
         fi
 
@@ -162,13 +194,13 @@ function __HELLSCRIPTS_INJECT_FUNS {
             bash <(curl -Ls "$1") "${@: 2}"    ||
             bash <(wget -qO- "$1") "${@: 2}"   ||
             bash <(lynx -dump "$1") "${@: 2}"  ||
-            HellErrorLogger "Failed to run command!\nRemote URI: $1\nArguments: ${@: 2}"
+            __HELLSCRIPTS_ERROR_LOGGER "Failed to run command!\nRemote URI: $1\nArguments: ${@: 2}"
         ) | __HELLSCRIPTS_WRITE_LOGS
     }
 }
 
 function __HELLSCRIPTS_RUN_INSTALLER {
-    function __HELL_SETUP_LOGGER {
+    function __HELLSCRIPTS_SETUP_LOGGER {
         if [[ $# -eq 0 ]]
         then
 	        return
@@ -176,18 +208,18 @@ function __HELLSCRIPTS_RUN_INSTALLER {
 	    echo "[HellScripts Amnesic Setup Logger]" "${@}"
     }
 
-    __HELL_SETUP_LOGGER "Initializing Setup..."
-    function __HELL_EDIT_ZSHRC {
-        __HELL_SETUP_LOGGER "Checking your .zshrc..."
+    __HELLSCRIPTS_SETUP_LOGGER "Initializing Setup..."
+    function __HELLSCRIPTS_EDIT_ZSHRC {
+        __HELLSCRIPTS_SETUP_LOGGER "Checking your .zshrc..."
         if [[ ! $(cat "$HOME/.zshrc" &>/dev/null | grep "HELLSCRIPTS") ]]
         then
-            __HELL_SETUP_LOGGER "No mention of \"HELLSCRIPTS\" found. Injecting..."
+            __HELLSCRIPTS_SETUP_LOGGER "No mention of \"HELLSCRIPTS\" found. Injecting..."
             touch "$HOME/.zshrc"
             (
                 echo "# [HELLSCRIPTS CONFIG] (uncomment and edit if u wanna ride me)"
-		echo "# __HELLSCRIPTS_TMP_FILE=$(mktemp) # * ... This goes at the top of your .zshrc file # [HELL_CONFIG_LINE]"
+                echo "# __HELLSCRIPTS_TMP_FILE=$(mktemp) # * ... This goes at the top of your .zshrc file # [HELL_CONFIG_LINE]"
                 echo "# . \"$HOME/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file too! # [HELL_CONFIG_LINE]"
-		echo -e "\n"
+                echo -e "\n"
                 echo "# if \"$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_STYLE]\" # [HELL_CONFIG_LINE]"
                 echo "# then # [HELL_CONFIG_LINE]"
                 echo "#     if [[ -e /usr/share/zsh/manjaro-zsh-prompt ]] # [HELL_CONFIG_LINE]"
@@ -212,19 +244,19 @@ function __HELLSCRIPTS_RUN_INSTALLER {
                 echo "    . \"$__HELLSCRIPTS_ATTR[SETUP_FILEPATH]\" \"doINSTALL\" # [HELL_CONFIG_LINE]"
                 echo "# fi # [HELL_CONFIG_LINE]"
             ) >> "$HOME/.zshrc"
-            __HELL_SETUP_LOGGER "Injected HellScripts config sample... Opening Editor."
-            __HELL_OPEN_EDITOR "$HOME/.zshrc"
+            __HELLSCRIPTS_SETUP_LOGGER "Injected HellScripts config sample... Opening Editor."
+            __HELLSCRIPTS_OPEN_EDITOR "$HOME/.zshrc"
     	fi
     }
 
-    function __HELL_REGENERATE_HELLMAP {
-        __HELL_SETUP_LOGGER "Building Hellmap anew, reseting your crappy config."
-        rm -f "$__HELL_HELLMAP_PATH"
+    function __HELLSCRIPTS_REGENERATE_HELLMAP {
+        __HELLSCRIPTS_SETUP_LOGGER "Building Hellmap anew, reseting your crappy config."
+        rm -f "$__HELLSCRIPTS_HELLMAP_PATH"
         (
             echo "set -a"                                                                                                           &&
-            echo "__HELL_REPO_ROOT=\"$HOME/MyHellScripts\""                                                                         &&
+            echo "__HELLSCRIPTS_REPO_ROOT=\"$HOME/MyHellScripts\""                                                                  &&
             echo "declare -Ax __HELLSCRIPTS_ATTR=("                                                                                 &&
-            echo "    [\"HELL_MODE\"]=true"                                                                                           &&
+            echo "    [\"HELL_MODE\"]=true"                                                                                         &&
             echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_STYLE\"]=false"                                                                  &&
             echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_CONFIG\"]=true"                                                                  &&
             echo "    [\"ENABLE_HELLSCRIPTS_UPDATE_ON_SHELL_POP\"]=true"                                                            &&
@@ -236,85 +268,58 @@ function __HELLSCRIPTS_RUN_INSTALLER {
             echo "    [\"MY_MACKUP_REMOTE_REPO_URI\"]=\"git@github.com:LeBlancLapin/Mackup.git\""                                   &&
             echo "    [\"PREZTO_REMOTE_REPO_URI\"]=\"https://github.com/sorin-ionescu/prezto.git\""                                 &&
             echo "    [\"REMOTE_GETPKG_SCRIPT_URI\"]=\"https://raw.githubusercontent.com/LeBlancLapin/hell-pkg/main/hell-getpkg\""  &&
-            echo "    [\"REPO_DIR\"]=\"$__HELL_REPO_ROOT\""                                                                         &&
+            echo "    [\"REPO_DIR\"]=\"$__HELLSCRIPTS_REPO_ROOT\""                                                                  &&
             echo "    [\"MACKUP_REPO_DIR\"]=\"$HOME/.config/mackup_backup/Mackup\""                                                 &&
             echo "    [\"PREZTO_REPO_DIR\"]=\"${ZDOTDIR:-$HOME}/.zprezto\""                                                         &&
-            echo "    [\"SETUP_FILEPATH\"]=\"$__HELL_REPO_ROOT/sHell/hell-installer\""                                              &&
+            echo "    [\"SETUP_FILEPATH\"]=\"$__HELLSCRIPTS_REPO_ROOT/sHell/hell-installer\""                                       &&
             echo "    [\"MACKUP_CONFIG_FILEPATH\"]=\"~/.mackup.cfg\""                                                               &&
             echo "    [\"MEMO_RUNTIME_ERROR\"]=false"                                                                               &&
             echo "    [\"LOGFILE\"]=\"$__HELLSCRIPTS_TMP_FILE\""                                                                    &&
             echo ")"                                                                                                                &&
             echo "set +a"
-        ) >> "$__HELL_HELLMAP_PATH"
+        ) >> "$__HELLSCRIPTS_HELLMAP_PATH"
 
-        __HELL_SETUP_LOGGER "Done. See?"
-        cat "$__HELL_HELLMAP_PATH"
+        __HELLSCRIPTS_SETUP_LOGGER "Done. See?"
+        cat "$__HELLSCRIPTS_HELLMAP_PATH"
     }
 
-    if [[ ! -f $__HELL_HELLMAP_PATH ]]
-    then
-        __HELL_REGENERATE_HELLMAP
-        __HELL_EDIT_ZSHRC
-    fi
+    [[ ! -f $__HELLSCRIPTS_HELLMAP_PATH ]]  && 
+        __HELLSCRIPTS_REGENERATE_HELLMAP    &&
+        __HELLSCRIPTS_EDIT_ZSHRC
 
-    __HELL_SETUP_LOGGER "Sourcing HellMap..."
-    . "$__HELL_HELLMAP_PATH"
+    __HELLSCRIPTS_SETUP_LOGGER "Sourcing HellMap..."
+    . "$__HELLSCRIPTS_HELLMAP_PATH"
 
-    __HELL_SETUP_LOGGER "Injecting HellScripts core functions..."
+    __HELLSCRIPTS_SETUP_LOGGER "Injecting HellScripts core functions..."
     __HELLSCRIPTS_INJECT_FUNS
 
     if [[ "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]" ]]
     then
         __HELLSCRIPTS_INJECT_LOGGER
-        HelLogger "Injected HellScripts logger into your Shell env..."
+        __HELLSCRIPTS_LOGGER "Injected HellScripts logger into your Shell env..."
     else
         __HELLSCRIPTS_INJECT_PHONY_LOGGER
-        HelLogger "Injected a Phony HellScripts logger into your Shell env..."
+        __HELLSCRIPTS_LOGGER "Injected a Phony HellScripts logger into your Shell env..."
     fi
 
-    if ! __HELL_IS_COMMAND_IMPORTED "git"
-    then
-        HelLogger "Installing git..."  &&
-        HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "git"
-    fi
+    __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY "git" "zsh" "curl"
 
-    if ! __HELL_IS_COMMAND_IMPORTED "zsh"
-    then
-        HelLogger "Installing zsh..."                                              &&
-        HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "zsh"  &&
-        chsh -s /bin/zsh
-    fi
-
-    if ! __HELL_IS_COMMAND_IMPORTED "curl"
-    then
-        HelLogger "Installing curl..."  &&
-        HellRemoteExecution "$__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]" "curl"
-    fi
-
-    if [[ ! $(ps -p $$ | grep zsh) ]]
-    then
-        HelLogger "Initializing your HellScripts session with zsh..."
+    [[ ! $(ps -p $$ | grep zsh) ]]                                                &&
+        chsh -s /bin/zsh                                                          &&
+        __HELLSCRIPTS_LOGGER "Initializing your HellScripts session with zsh..."  &&
         exec zsh
-    fi
 
-    if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]
-    then
-        HelLogger "Importing HellScripts core..."  &&
-        cd -P ~                                    &&
-        (
-            git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" `basename "$__HELLSCRIPTS_ATTR[REPO_DIR]"` --recurse-submodules |
-            __HELLSCRIPTS_WRITE_LOGS
-        ) || __HELLSCRIPTS_INSTALLER_EPIC_FAILED=true;
-    fi
+    [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]] &&
+        __HELLSCRIPTS_CLONE_REPO
 
-    __HELL_NEW_PATH_ELM=$(eval __HELLSCRIPTS_FETCH_PATHES)
-    PATH="$PATH:$__HELL_NEW_PATH_ELM"
-    HelLogger "Updated PATH with values: $__HELL_NEW_PATH_ELM"
-    unset __HELL_NEW_PATH_ELM
+    __HELLSCRIPTS_NEW_PATH_ELM=$(eval __HELLSCRIPTS_FETCH_PATHES)
+    PATH="$PATH:$__HELLSCRIPTS_NEW_PATH_ELM"
+    __HELLSCRIPTS_LOGGER "Updated PATH with values: $__HELLSCRIPTS_NEW_PATH_ELM"
+    unset __HELLSCRIPTS_NEW_PATH_ELM
 
     if [[ $__HELLSCRIPTS_INSTALLER_EPIC_FAILED ]]
     then
-        HellErrorLogger "\nWell tried, wkwkwk.\n" \
+        __HELLSCRIPTS_ERROR_LOGGER "\nWell tried, wkwkwk.\n" \
         "Are you aware this is just a gitmodule which I made public,\n" \
         "only an artefact from a several dozens of thousands lines of code project?\n" \
         "I love u qt."
