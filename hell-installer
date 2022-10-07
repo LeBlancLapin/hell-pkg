@@ -21,8 +21,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
     function __HELLSCRIPTS_INITIALIZE_ZSH_SESSION {
         if [[ ! $(ps -p $$ | grep zsh) ]]
         then
-            chsh -s /bin/zsh                                                          &&
-            __HELLSCRIPTS_LOGGER "Initializing your HellScripts session with zsh..."  &&
+            chsh -s /bin/zsh
+            __HELLSCRIPTS_LOGGER "Initializing your HellScripts session with zsh..."
             exec zsh
         fi
     }
@@ -30,7 +30,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_CLONE_REPO..."
     function __HELLSCRIPTS_CLONE_REPO {
         __HELLSCRIPTS_LOGGER "Importing HellScripts core..."
-        cd -P ~  &&
+        cd -P ~
         (
             git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" "$__HELLSCRIPTS_ATTR[REPO_DIR]" --recurse-submodules |
             __HELLSCRIPTS_WRITE_LOGS
@@ -92,7 +92,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
         if [[ -z "${__HELLSCRIPTS_FIRST_BYTE}" ]]
         then
-            __HELLSCRIPTS_ERROR_LOGGER "Piping something nil in __HELLSCRIPTS_WRITE_LOGS is not allowed."
+            __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_WRITE_LOGS: Well tried, but I won't let you inject anything here."
             return 1
         fi
 
@@ -117,8 +117,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
         if [[ "${line}" ]]
         then
             line="$__HELLSCRIPTS_FIRST_BYTE$line"
-            echo -e $(date) >> "$__HELLSCRIPTS_LOG_FILE"        &&
-            2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOG_FILE"  &&
+            echo -e $(date) >> "$__HELLSCRIPTS_LOG_FILE"
+            2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOG_FILE"
             while read l
             do
                 echo -ne "$line" >> "$__HELLSCRIPTS_LOG_FILE" 2>&1
@@ -153,7 +153,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     function __HELLSCRIPTS_INJECT_PHONY_LOGGER {
         type __HELLSCRIPTS_LOGGER &> /dev/null        && unset -f -- __HELLSCRIPTS_LOGGER
         type __HELLSCRIPTS_ERROR_LOGGER &> /dev/null  && unset -f -- __HELLSCRIPTS_ERROR_LOGGER
-        __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_LOGGER (Name squatting: Phony function)..."  &&
+        __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_LOGGER (Name squatting: Phony function)..."
         __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_ERROR_LOGGER (Name squatting: Phony function)..."
         function __HELLSCRIPTS_LOGGER {}
         function __HELLSCRIPTS_ERROR_LOGGER {}
@@ -170,7 +170,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     function __HELLSCRIPTS_IS_COMMAND_IMPORTED {
         if [[ $# -eq 0 ]]
         then
-            __HELLSCRIPTS_ERROR_LOGGER "LOL"  &&
+            __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_IS_COMMAND_IMPORTED: wrong number of arguments (expected 1, got 0)"
             return 7
         fi
 
@@ -189,7 +189,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     function __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY {
         if [[ $# -eq 0 ]]
         then
-            __HELLSCRIPTS_ERROR_LOGGER "U forgot to specify which dependency you would like to append.\nYou drunk?" &&
+            __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_SETUP_APPEND_DEPENDENCY: wrong number of arguments (expected 1, got 0)"
             return 1
         fi
 
@@ -207,7 +207,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     function __HELLSCRIPTS_REMOTE_EXECUTION {
         if [[ $# -eq 0 ]]
         then
-            __HELLSCRIPTS_ERROR_LOGGER "What should I hellah remote execute? I'm not designed to handle riddles."  &&
+            __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_REMOTE_EXECUTION: wrong number of arguments (expected 1, got 0)"
             return 7
         fi
 
