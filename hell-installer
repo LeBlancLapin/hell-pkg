@@ -105,7 +105,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
             if [[ "${line}" ]]
             then
                 line="$__HELLSCRIPTS_FIRST_BYTE$line"
-                echo -e $(date) >> "$__HELLSCRIPTS_LOG_FILE"     &&
+                echo -e $(date) >> "$__HELLSCRIPTS_LOG_FILE"        &&
                 2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOG_FILE"  &&
                 while read l
                 do
