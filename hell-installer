@@ -5,6 +5,7 @@ __HELL_OLDPWD=$(pwd)
 __HELL_HELLMAP_PATH="$HOME/.zsh_hellmap"
 
 function __HELLSCRIPTS_INJECT_FUNS {
+    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_OPEN_EDITOR..."
     function __HELLSCRIPTS_OPEN_EDITOR {
         if [[ $# -eq 0 ]]
         then
@@ -20,13 +21,14 @@ function __HELLSCRIPTS_INJECT_FUNS {
         nano "$__HELL_EDITOR_FILES"         ||
         vi "$__HELL_EDITOR_FILES"           ||
         ne "$__HELL_EDITOR_FILES"           ||
-        HellErrorLogger "Can't open any editor, configure your EDITOR environment variable." &&
+        __HELL_SETUP_LOGGER "Can't open any editor, configure your EDITOR environment variable." &&
         unset __HELL_EDITOR_FILES                                                            &&
         return 1
 
         unset __HELL_EDITOR_FILES
     }
 
+    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_UNINSTALL..."
     function __HELLSCRIPTS_UNINSTALL {
         [[ ! -f $__HELL_HELLMAP_PATH ]] && __HELL_REGENERATE_HELLMAP
         . "$__HELL_HELLMAP_PATH"
@@ -34,11 +36,20 @@ function __HELLSCRIPTS_INJECT_FUNS {
         rm -f "$__HELL_HELLMAP_PATH"
     }
 
+    __HELL_SETUP_LOGGER "Injecting __DISPLAY_HELLSCRIPTS_LOGS..."
     function __DISPLAY_HELLSCRIPTS_LOGS {
         cat $__HELLSCRIPTS_ATTR[LOGFILE]
     }
 
+    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_WRITE_LOGS..."
     function __HELLSCRIPTS_WRITE_LOGS {
+	__HELL_FIRST_BYTE=$(dd bs=1 count=1 2>/dev/null | od -t o1 -A n | tr -dc 0-9)
+
+        if [[ -z "${__HELL_FIRST_BYTE}" ]]
+	then
+            return 1
+	fi
+
         if [[ $# -eq 0 ]]
         then
             __HELL_LOG_FILE="$__HELLSCRIPTS_ATTR[LOGFILE]"
@@ -48,60 +59,71 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
         if [[ $# -gt 1 ]]
         then
+            unset __HELL_FIRST_BYTE
             return 7
         fi
 
         if [[ ! -f "$__HELL_LOG_FILE" ]]
         then
+            unset __HELL_FIRST_BYTE
             return 2
         fi
 
         read l
-        if [[ $l ]]
+        if [[ "${l}" ]]
         then
-            echo -e $(date) >> "$__HELL_LOG_FILE"       &&
-            2>&1 echo -ne "${l}" >> "$__HELL_LOG_FILE"  &&
+            l="$__HELL_FIRST_BYTE$l"
+            echo -e $(date) >> "$__HELL_LOG_FILE"     &&
+            2>&1 echo -ne "$l" >> "$__HELL_LOG_FILE"  &&
             while read l
             do
-                echo -ne "${l}" >> "$__HELL_LOG_FILE" 2>&1
+                echo -ne "$l" >> "$__HELL_LOG_FILE" 2>&1
             done
         fi
         echo -e "\n" >> "$__HELL_LOG_FILE"
         unset __HELL_LOG_FILE
     }
 
+    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_INJECT_LOGGER..."
     function __HELLSCRIPTS_INJECT_LOGGER {
         type HelLogger &> /dev/null        && unset -f -- HelLogger
         type HellErrorLogger &> /dev/null  && unset -f -- HellErrorLogger
 
         function HelLogger {
-            if [[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
+            if [[ "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]" ]]
             then
-                2>&1 $(printf "[HellScripts] %s" {$@} | __HELLSCRIPTS_WRITE_LOGS)
+                2>&1 $(echo "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS)
             fi
         }
 
+        HelLogger "Injected __HELLSCRIPTS_LOGGER..."
+        HelLogger "Injecting __HELLSCRIPTS_ERROR_LOGGER..."
         function HellErrorLogger {
             if [[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
             then
-                $(>&2 printf "[HellScripts ERROR] %s" {$@} 2>&1 | __HELLSCRIPTS_WRITE_LOGS)
+                $(>&2 echo "[HellScripts ERROR] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS)
             fi
         }
     }
 
+    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_INJECT_PHONY_LOGGER..."
     function __HELLSCRIPTS_INJECT_PHONY_LOGGER {
         type HelLogger &> /dev/null        && unset -f -- HelLogger
         type HellErrorLogger &> /dev/null  && unset -f -- HellErrorLogger
+        __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_LOGGER (Name squatting: Phony function)..."  &&
+        __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_ERROR_LOGGER (Name squatting: Phony function)..."
         function HelLogger {}
         function HellErrorLogger {}
     }
 
+    __HELL_SETUP_LOGGER "Injecting __HELLSCRIPTS_FETCH_PATHES..."
     function __HELLSCRIPTS_FETCH_PATHES {
         __HELLSCRIPTS_DIRS=$(find $__HELLSCRIPTS_ATTR[REPO_DIR] -type d -not -path "$__HELLSCRIPTS_ATTR[REPO_DIR]/.git*")
         echo "${__HELLSCRIPTS_DIRS//[$'\t\r\n']/:}:$HOME/.emacs.d/bin"
         unset __HELLSCRIPTS_DIRS
     }
 
+    __HELL_SETUP_LOGGER "Injecting __HELL_IS_COMMAND_IMPORTED..."
     function __HELL_IS_COMMAND_IMPORTED {
         if [[ $# -eq 0 ]]
         then
@@ -120,6 +142,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         true
     }
 
+    __HELL_SETUP_LOGGER "Injecting __HELL_REMOTE_EXECUTION..."
     function HellRemoteExecution {
         if [[ $# -eq 0 ]]
         then
@@ -137,14 +160,26 @@ function __HELLSCRIPTS_INJECT_FUNS {
 }
 
 function __HELLSCRIPTS_RUN_INSTALLER {
+    function __HELL_SETUP_LOGGER {
+        if [[ $# -eq 0 ]]
+        then
+	        return
+	    fi
+	    echo "[HellScripts Amnesic Setup Logger]" "${@}"
+    }
+
+    __HELL_SETUP_LOGGER "Initializing Setup..."
     function __HELL_EDIT_ZSHRC {
+        __HELL_SETUP_LOGGER "Checking your .zshrc..."
         if [[ ! $(cat "$HOME/.zshrc" &>/dev/null | grep "HELLSCRIPTS") ]]
-	then
+        then
+            __HELL_SETUP_LOGGER "No mention of \"HELLSCRIPTS\" found. Injecting..."
             touch "$HOME/.zshrc"
             (
                 echo "# [HELLSCRIPTS CONFIG] (uncomment and edit if u wanna ride me)"
-                echo "# . \"$HOME/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file"
-
+		echo "# __HELLSCRIPTS_TMP_FILE=$(mktemp) # * ... This goes at the top of your .zshrc file"
+                echo "# . \"$HOME/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file too!"
+		echo -e "\n"
                 echo "# if \"$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_STYLE]\""
                 echo "# then"
                 echo "#     if [[ -e /usr/share/zsh/manjaro-zsh-prompt ]]"
@@ -169,18 +204,19 @@ function __HELLSCRIPTS_RUN_INSTALLER {
                 echo "    . \"$__HELLSCRIPTS_ATTR[SETUP_FILEPATH]\" \"doINSTALL\""
                 echo "# fi"
             ) >> "$HOME/.zshrc"
+            __HELL_SETUP_LOGGER "Injected HellScripts config sample... Opening Editor."
             __HELL_OPEN_EDITOR "$HOME/.zshrc"
     	fi
     }
 
     function __HELL_REGENERATE_HELLMAP {
+        __HELL_SETUP_LOGGER "Building Hellmap anew, reseting your crappy config."
         rm -f "$__HELL_HELLMAP_PATH"
         (
             echo "set -a"                                                                                                           &&
-            echo "__HELLSCRIPTS_TMP_FILE=`mktemp`"                                                                                  &&
             echo "__HELL_REPO_ROOT=\"$HOME/MyHellScripts\""                                                                         &&
             echo "declare -Ax __HELLSCRIPTS_ATTR=("                                                                                 &&
-            echo "    ["HELL_MODE"]=true"                                                                                           &&
+            echo "    [\"HELL_MODE\"]=true"                                                                                           &&
             echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_STYLE\"]=false"                                                                  &&
             echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_CONFIG\"]=true"                                                                  &&
             echo "    [\"ENABLE_HELLSCRIPTS_UPDATE_ON_SHELL_POP\"]=true"                                                            &&
@@ -203,7 +239,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
             echo "set +a"
         ) >> "$__HELL_HELLMAP_PATH"
 
-        echo "$__HELL_HELLMAP_PATH"
+        __HELL_SETUP_LOGGER "Done. See?"
         cat "$__HELL_HELLMAP_PATH"
     }
 
@@ -213,14 +249,19 @@ function __HELLSCRIPTS_RUN_INSTALLER {
         __HELL_EDIT_ZSHRC
     fi
 
+    __HELL_SETUP_LOGGER "Sourcing HellMap..."
     . "$__HELL_HELLMAP_PATH"
+
+    __HELL_SETUP_LOGGER "Injecting HellScripts core functions..."
     __HELLSCRIPTS_INJECT_FUNS
 
-    if [[ $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
+    if [[ "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]" ]]
     then
         __HELLSCRIPTS_INJECT_LOGGER
+        HelLogger "Injected HellScripts logger into your Shell env..."
     else
         __HELLSCRIPTS_INJECT_PHONY_LOGGER
+        HelLogger "Injected a Phony HellScripts logger into your Shell env..."
     fi
 
     if ! __HELL_IS_COMMAND_IMPORTED "git"
@@ -267,7 +308,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     then
         HellErrorLogger "\nWell tried, wkwkwk.\n" \
         "Are you aware this is just a gitmodule which I made public,\n" \
-        "but is only an artefact from a several dozens of thousands lines of code project?\n" \
+        "only an artefact from a several dozens of thousands lines of code project?\n" \
         "I love u qt."
     else
         . .propagate_hell_zshmess
