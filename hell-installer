@@ -126,8 +126,10 @@ function __HELLSCRIPTS_INJECT_FUNS {
         __HELLSCRIPTS_CREATE_ROOT_DIRECTORY
         rm -f "${__HELLSCRIPTS_HELLMAP_FILEPATH}"
         (
+            echo "#!/usr/bin/env zsh"                                                                                               &&
+            echo                                                                                                                    &&
             echo "set -a"                                                                                                           &&
-            echo "__HELLSCRIPTS_REPO_ROOT=\"${__HELLSCRIPTS_REPO_ROOT}\""                                                                  &&
+            echo "__HELLSCRIPTS_REPO_ROOT=\"${__HELLSCRIPTS_REPO_ROOT}\""                                                           &&
             echo "declare -Ax __HELLSCRIPTS_ATTR=("                                                                                 &&
             echo "    [\"HELL_MODE\"]=true"                                                                                         &&
             echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_STYLE\"]=false"                                                                  &&
@@ -141,10 +143,10 @@ function __HELLSCRIPTS_INJECT_FUNS {
             echo "    [\"MY_MACKUP_REMOTE_REPO_URI\"]=\"git@github.com:LeBlancLapin/Mackup.git\""                                   &&
             echo "    [\"PREZTO_REMOTE_REPO_URI\"]=\"https://github.com/sorin-ionescu/prezto.git\""                                 &&
             echo "    [\"REMOTE_GETPKG_SCRIPT_URI\"]=\"https://raw.githubusercontent.com/LeBlancLapin/hell-pkg/main/hell-getpkg\""  &&
-            echo "    [\"REPO_DIR\"]=\"${__HELLSCRIPTS_REPO_ROOT}\""                                                                  &&
+            echo "    [\"REPO_DIR\"]=\"${__HELLSCRIPTS_REPO_ROOT}\""                                                                &&
             echo "    [\"MACKUP_REPO_DIR\"]=\"$HOME/.config/mackup_backup/Mackup\""                                                 &&
             echo "    [\"PREZTO_REPO_DIR\"]=\"${ZDOTDIR:-$HOME}/.zprezto\""                                                         &&
-            echo "    [\"SETUP_FILEPATH\"]=\"${__HELLSCRIPTS_REPO_ROOT/sHell/hell-installer}\""                                       &&
+            echo "    [\"SETUP_FILEPATH\"]=\"${__HELLSCRIPTS_REPO_ROOT/sHell/hell-installer}\""                                     &&
             echo "    [\"MACKUP_CONFIG_FILEPATH\"]=\"~/.mackup.cfg\""                                                               &&
             echo "    [\"MEMO_RUNTIME_ERROR\"]=false"                                                                               &&
             echo ")"                                                                                                                &&
