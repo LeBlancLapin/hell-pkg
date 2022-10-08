@@ -54,11 +54,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
         then
             __HELLSCRIPTS_INSTALLER_EPIC_FAILED=true
         fi
-
-        cd -P $__HELLSCRIPTS_REPO_PATH  &&
-        (
-            2>&1 git submodule update --remote | __HELLSCRIPTS_WRITE_LOGS
-        )
     }
 
     function __HELLSCRIPTS_OPEN_EDITOR {
@@ -108,7 +103,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
                 echo
                 echo "# if \"\$__HELLSCRIPTS_ATTR[HELL_MODE]\" # [HELL_CONFIG_LINE]"
                 echo "# then # [HELL_CONFIG_LINE]"
-                echo "#     echo \"HellScripts startup logs available at -> \$__HELLSCRIPTS_TMP_FILE\" # [HELL_CONFIG_LINE]"
+                echo "#     echo \"HellScripts startup logs available at -> \$__HELLSCRIPTS_LOG_FILE\" # [HELL_CONFIG_LINE]"
                 echo "#    . \"\$__HELLSCRIPTS_ATTR[SETUP_FILEPATH]\" \"doINSTALL\" # [HELL_CONFIG_LINE]"
                 echo "# fi # [HELL_CONFIG_LINE]"
             ) >> "$__HELLSCRIPTS_ZSHRC_FILEPATH"
@@ -168,7 +163,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     }
 
     function __DISPLAY_HELLSCRIPTS_LOGS {
-        cat "$__HELLSCRIPTS_TMP_FILE"
+        cat "$__HELLSCRIPTS_LOG_FILE"
     }
 
     function __HELLSCRIPTS_WRITE_LOGS {
@@ -290,6 +285,10 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY "git" "zsh" "curl" "awk"
     __HELLSCRIPTS_SETUP_LOGGER "Checking if you have imported HellScripts Repo..."
     if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]; then __HELLSCRIPTS_CLONE_REPO; fi
+    cd -P $__HELLSCRIPTS_REPO_PATH  &&
+    (
+        2>&1 git submodule update --remote | __HELLSCRIPTS_WRITE_LOGS
+    )
 
     __HELLSCRIPTS_SET_ZSH_AS_DEFAULT_SHELL
     __HELLSCRIPTS_INJECT_PATHES
