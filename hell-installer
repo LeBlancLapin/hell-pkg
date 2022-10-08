@@ -5,9 +5,12 @@ __HELLSCRIPTS_OLDPWD="$(pwd)"
 __HELLSCRIPTS_FOLDER="$HOME/.hellscripts"
 __HELLSCRIPTS_HELLMAP_FILEPATH="$__HELLSCRIPTS_FOLDER/.zsh_hellmap"
 __HELL_TRAP_SIGNALS="EXIT SIGKILL SIGINT"
+__HELLSCRIPTS_REINSTALLING=false
+__HELLSCRIPTS_LOG_FILE="${FOO:-`mktemp`}"
 
 # __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED &> /dev/null"
-# ToDo
+
+__HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING &> /dev/null"
 
 function __HELLSCRIPTS_INJECT_FUNS {
     function __HELLSCRIPTS_CREATE_ROOT_DIRECTORY {
@@ -79,9 +82,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
             __HELLSCRIPTS_SETUP_LOGGER "No mention of \"HELLSCRIPTS\" found in your .zshrc.\nInjecting..."
             touch "$HOME/.zshrc"
             (
-                echo "# [HELLSCRIPTS CONFIG] (uncomment and edit if u wanna ride me)"
-                echo "# __HELLSCRIPTS_TMP_FILE=$(mktemp) # * ... This goes at the top of your .zshrc file # [HELL_CONFIG_LINE]"
-                echo "# . \"$__HELLSCRIPTS_FOLDER/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file too! # [HELL_CONFIG_LINE]"
+                echo "# . \"$__HELLSCRIPTS_FOLDER/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file! # [HELL_CONFIG_LINE]"
                 echo
                 echo "# if \"\$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_STYLE]\" # [HELL_CONFIG_LINE]"
                 echo "# then # [HELL_CONFIG_LINE]"
@@ -107,6 +108,13 @@ function __HELLSCRIPTS_INJECT_FUNS {
                 echo "# fi # [HELL_CONFIG_LINE]"
             ) >> "$HOME/.zshrc"
             __HELLSCRIPTS_OPEN_EDITOR "$HOME/.zshrc"
+        else
+            sed '/HELL_CONFIG_LINE/ s/^#//' -i "$HOME/.zshrc"
+            sed '/HELL_CONFIG_LINE/ s/^\s//' -i "$HOME/.zshrc"
+            if $__HELLSCRIPTS_REINSTALLING
+            then
+                __HELLSCRIPTS_OPEN_EDITOR "$HOME/.zshrc"
+            fi
         fi
     }
 
@@ -163,7 +171,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         rm -f "$__HELLSCRIPTS_HELLMAP_FILEPATH"
         sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#&/' -i "${__HELLSCRIPTS_ZSHRC_PATH}"
         sed 's/\(#\)\1\+/\1/g' -i "${__HELLSCRIPTS_ZSHRC_PATH}"
-        rm -rf $__HELLSCRIPTS_FOLDER
+        rm -rf "$__HELLSCRIPTS_FOLDER"
     }
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __DISPLAY_HELLSCRIPTS_LOGS..."
@@ -186,15 +194,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
             return 1
         fi
 
-        if [[ $# -eq 0 ]]
-        then
-            if [[ -z "$__HELLSCRIPTS_LOG_FILE" ]]
-            then
-                __HELLSCRIPTS_LOG_FILE=$(mktemp)
-            fi
-        else
-            __HELLSCRIPTS_LOGGER_CURRENT_FILE="${1}";
-        fi
+        [[ $# -ne 0 ]] &&
+            __HELLSCRIPTS_LOGGER_CURRENT_FILE="${1}"
 
         if [[ $# -gt 1 ]]
         then
@@ -376,6 +377,7 @@ else
 
     if [[ "${1}" == "doREINSTALL" ]]
     then
+        __HELLSCRIPTS_REINSTALLING=true
         __HELLSCRIPTS_UNINSTALL
         __HELLSCRIPTS_RUN_INSTALLER
     fi
