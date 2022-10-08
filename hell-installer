@@ -9,6 +9,7 @@ __HELLSCRIPTS_REPO_PATH="$__HELLSCRIPTS_FOLDER/MyHellScripts"
 __HELLSCRIPTS_HELLMAP_FILEPATH="$__HELLSCRIPTS_FOLDER/.zsh_hellmap"
 __HELLSCRIPTS_REINSTALLING=false
 __HELLSCRIPTS_LOG_FILE="${__HELLSCRIPTS_LOG_FILE:-`mktemp`}"
+
 __HELLSCRIPTS_ZSHRC_FILEPATH="$HOME/.zshrc"
 
 function __HELLSCRIPTS_INJECT_FUNS {
@@ -78,10 +79,11 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     function __HELLSCRIPTS_EDIT_ZSHRC {
         touch "$__HELLSCRIPTS_ZSHRC_FILEPATH"
-        if [[ ! $(cat "$__HELLSCRIPTS_ZSHRC_FILEPATH" &>/dev/null | grep "HELLSCRIPTS") ]]
+        if [[ ! -f "$__HELLSCRIPTS_ZSHRC_FILEPATH" || ! $(cat "$__HELLSCRIPTS_ZSHRC_FILEPATH" &>/dev/null | grep "HELLSCRIPTS") ]]
         then
             __HELLSCRIPTS_SETUP_LOGGER "No mention of \"HELLSCRIPTS\" found in your .zshrc.\nInjecting..."
             (
+                echo "# __HELLSCRIPTS_LOG_FILE=\"\${__HELLSCRIPTS_LOG_FILE:-\`mktemp\`}\""
                 echo "# . \"$__HELLSCRIPTS_FOLDER/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file! # [HELL_CONFIG_LINE]"
                 echo
                 echo "# if \"\$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_STYLE]\" # [HELL_CONFIG_LINE]"
@@ -268,7 +270,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     }
 
     function __DISPLAY_HELLSCRIPTS_LOGS {
-        cat "$__HELLSCRIPTS_LOG_FILE" # * ... ToDo: fixer cette merde + Ne pas générer deux logfiles différents -_-
+        cat "$__HELLSCRIPTS_LOG_FILE"
     }
 }
 
@@ -283,7 +285,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     . "$__HELLSCRIPTS_HELLMAP_FILEPATH"
 
     __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY "git" "zsh" "curl" "awk"
-    __HELLSCRIPTS_SETUP_LOGGER "Checking if you have imported HellScripts Repo..."
+    __HELLSCRIPTS_LOGGER "Checking if you have imported HellScripts Repo..."
     if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]; then __HELLSCRIPTS_CLONE_REPO; fi
     cd -P $__HELLSCRIPTS_REPO_PATH  &&
     (
