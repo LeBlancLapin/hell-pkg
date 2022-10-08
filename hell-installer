@@ -6,16 +6,18 @@ __HELLSCRIPTS_FOLDER="$HOME/.hellscripts"
 __HELLSCRIPTS_HELLMAP_FILEPATH="$__HELLSCRIPTS_FOLDER/.zsh_hellmap"
 __HELL_TRAP_SIGNALS="EXIT SIGKILL SIGINT"
 
-function __HELLSCRIPTS_SET_AT_EXIT_TRAP {
-    if [[ $# -eq 0 ]]
-    then
-        return 1
-    fi
-
-    trap "${@}" EXIT SIGKILL SIGINT
-}
+# __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED &> /dev/null"
+# ToDo
 
 function __HELLSCRIPTS_INJECT_FUNS {
+    function __HELLSCRIPTS_SET_AT_EXIT_TRAP {
+        if [[ $# -eq 0 ]]
+        then
+            return 1
+        fi
+
+        trap "${@}" EXIT SIGKILL SIGINT
+    }
     __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELL_TRAP_SIGNALS &> /dev/null"
 
     function __HELLSCRIPTS_SETUP_LOGGER {
@@ -285,7 +287,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     }
 
     function __HELLSCRIPTS_REGENERATE_HELLMAP {
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_NEW_PATH_ELM && unset __HELLSCRIPTS_REPO_ROOT && unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED &> /dev/null"
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_NEW_PATH_ELM && unset __HELLSCRIPTS_REPO_ROOT &> /dev/null"
 
         __HELLSCRIPTS_REPO_ROOT="${__HELLSCRIPTS_FOLDER}/MyHellScripts"
         __HELLSCRIPTS_SETUP_LOGGER "Building Hellmap anew, reseting your crappy config."
@@ -362,12 +364,11 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     fi
 }
 
+__HELLSCRIPTS_INJECT_FUNS
 if [[ $# -eq 0 ]]
 then
     __HELLSCRIPTS_RUN_INSTALLER
 else
-    __HELLSCRIPTS_INJECT_FUNS
-
     if [[ "${1}" == "doINSTALL" ]]
     then
         __HELLSCRIPTS_RUN_INSTALLER
