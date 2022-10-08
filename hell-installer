@@ -24,7 +24,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         trap "${@}" EXIT SIGKILL SIGINT
     }
 
-    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && set +a &> /dev/null"
+    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && unset __HELLSCRIPTS_NEW_PATH_ELM && set +a &> /dev/null"
 
     function __HELLSCRIPTS_SETUP_LOGGER {
         if [[ $# -eq 0 ]]
@@ -119,7 +119,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_GET_FIRST_BYTE_PIPED..."
     function __HELLSCRIPTS_REGENERATE_HELLMAP {
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_NEW_PATH_ELM && unset __HELLSCRIPTS_REPO_ROOT &> /dev/null"
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REPO_ROOT &> /dev/null"
 
         __HELLSCRIPTS_REPO_ROOT="${__HELLSCRIPTS_FOLDER}/MyHellScripts"
         __HELLSCRIPTS_SETUP_LOGGER "Building Hellmap anew, reseting your crappy config."
@@ -318,8 +318,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
 function __HELLSCRIPTS_RUN_INSTALLER {
     __HELLSCRIPTS_INJECT_FUNS
     __HELLSCRIPTS_SETUP_LOGGER "Injected HellScripts core functions..."
-
-    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_NEW_PATH_ELM &> /dev/null"
 
     __HELLSCRIPTS_SETUP_LOGGER "Initializing Setup..."
     if [[ ! -f "$__HELLSCRIPTS_HELLMAP_FILEPATH" ]]
