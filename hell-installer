@@ -8,7 +8,7 @@ __HELLSCRIPTS_FOLDER="$HOME/.hellscripts"
 __HELLSCRIPTS_REPO_PATH="$__HELLSCRIPTS_FOLDER/MyHellScripts"
 __HELLSCRIPTS_HELLMAP_FILEPATH="$__HELLSCRIPTS_FOLDER/.zsh_hellmap"
 __HELLSCRIPTS_REINSTALLING=false
-__HELLSCRIPTS_LOG_FILE="${FOO:-`mktemp`}"
+__HELLSCRIPTS_LOG_FILE="${__HELLSCRIPTS_LOG_FILE:-`mktemp`}"
 __HELLSCRIPTS_ZSHRC_FILEPATH="$HOME/.zshrc"
 
 function __HELLSCRIPTS_INJECT_FUNS {
@@ -162,10 +162,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
         rm -rf "$__HELLSCRIPTS_FOLDER"
     }
 
-    function __DISPLAY_HELLSCRIPTS_LOGS {
-        cat "$__HELLSCRIPTS_LOG_FILE"
-    }
-
     function __HELLSCRIPTS_WRITE_LOGS {
         __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOGGER_CURRENT_FILE &> /dev/null"
         __HELLSCRIPTS_LOGGER_CURRENT_FILE=""
@@ -269,6 +265,10 @@ function __HELLSCRIPTS_INJECT_FUNS {
         PATH="$PATH:$__HELLSCRIPTS_NEW_PATH_ELM"
         __HELLSCRIPTS_LOGGER "Updated PATH with values:\n" \
                              "$__HELLSCRIPTS_NEW_PATH_ELM"
+    }
+
+    function __DISPLAY_HELLSCRIPTS_LOGS {
+        cat "$__HELLSCRIPTS_LOG_FILE" # * ... ToDo: fixer cette merde + Ne pas générer deux logfiles différents -_-
     }
 }
 
