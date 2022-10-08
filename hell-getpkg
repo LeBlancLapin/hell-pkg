@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# * ... REM: This script MUST be STANDALONE: it is designed to be remote executed
+
 declare -a __HELLSCRIPTS_PkgManagersArray=("pacman" "pamac" "apt" "dnf" "yum" "zypper")
 
 function __HELLSCRIPTS_INFER_PKG_MANAGER {
