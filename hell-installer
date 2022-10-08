@@ -246,21 +246,21 @@ function __HELLSCRIPTS_RUN_INSTALLER {
         __HELLSCRIPTS_SETUP_LOGGER "Checking your .zshrc..."
         if [[ ! $(cat "$HOME/.zshrc" &>/dev/null | grep "HELLSCRIPTS") ]]
         then
-            __HELLSCRIPTS_SETUP_LOGGER "No mention of \"HELLSCRIPTS\" found. Injecting..."
+            __HELLSCRIPTS_SETUP_LOGGER "No mention of \"HELLSCRIPTS\" found in your .zshrc.\nInjecting..."
             touch "$HOME/.zshrc"
             (
                 echo "# [HELLSCRIPTS CONFIG] (uncomment and edit if u wanna ride me)"
                 echo "# __HELLSCRIPTS_TMP_FILE=$(mktemp) # * ... This goes at the top of your .zshrc file # [HELL_CONFIG_LINE]"
                 echo "# . \"$__HELLSCRIPTS_FOLDER/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file too! # [HELL_CONFIG_LINE]"
-                echo -e "\n"
-                echo "# if \"$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_STYLE]\" # [HELL_CONFIG_LINE]"
+                echo
+                echo "# if \"\$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_STYLE]\" # [HELL_CONFIG_LINE]"
                 echo "# then # [HELL_CONFIG_LINE]"
                 echo "#     if [[ -e /usr/share/zsh/manjaro-zsh-prompt ]] # [HELL_CONFIG_LINE]"
                 echo "#     then # [HELL_CONFIG_LINE]"
                 echo "#         . /usr/share/zsh/manjaro-zsh-prompt # [HELL_CONFIG_LINE]"
                 echo "#     fi # [HELL_CONFIG_LINE]"
                 echo "# fi # [HELL_CONFIG_LINE]"
-                echo -e "\n"
+                echo -ne "\n"
                 echo "# if \"$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_CONFIG]\" # [HELL_CONFIG_LINE]"
                 echo "# then # [HELL_CONFIG_LINE]"
                 echo "#     USE_POWERLINE=\"true\" # [HELL_CONFIG_LINE]"
@@ -269,16 +269,13 @@ function __HELLSCRIPTS_RUN_INSTALLER {
                 echo "#         . /usr/share/zsh/manjaro-zsh-config # [HELL_CONFIG_LINE]"
                 echo "#     fi # [HELL_CONFIG_LINE]"
                 echo "# fi # [HELL_CONFIG_LINE]"
-                echo -e "\n"
+                echo
                 echo "# if \"$__HELLSCRIPTS_ATTR[HELL_MODE]\" # [HELL_CONFIG_LINE]"
                 echo "# then # [HELL_CONFIG_LINE]"
                 echo "#     echo \"HellScripts startup logs available at -> $__HELLSCRIPTS_TMP_FILE\" # [HELL_CONFIG_LINE]"
-                echo -e "\n"
-                echo "    . \"$__HELLSCRIPTS_ATTR[SETUP_FILEPATH]\" \"doINSTALL\" # [HELL_CONFIG_LINE]"
+                echo "#    . \"$__HELLSCRIPTS_ATTR[SETUP_FILEPATH]\" \"doINSTALL\" # [HELL_CONFIG_LINE]"
                 echo "# fi # [HELL_CONFIG_LINE]"
             ) >> "$HOME/.zshrc"
-            __HELLSCRIPTS_SETUP_LOGGER "Injected HellScripts config sample... Opening Editor."
-            __HELLSCRIPTS_OPEN_EDITOR "$HOME/.zshrc"
         fi
     }
 
@@ -319,14 +316,19 @@ function __HELLSCRIPTS_RUN_INSTALLER {
             echo "set +a"
         ) >> "$__HELLSCRIPTS_HELLMAP_FILEPATH"
 
-        __HELLSCRIPTS_SETUP_LOGGER "Done. See?"
-        cat "$__HELLSCRIPTS_HELLMAP_FILEPATH"
+        __HELLSCRIPTS_EDIT_ZSHRC
     }
 
-    if [[ ! -f $__HELLSCRIPTS_HELLMAP_FILEPATH ]]
+    if [[ ! -f "$__HELLSCRIPTS_HELLMAP_FILEPATH" ]]
     then
+        echo "SOUCE PD TRAVESTI" # ToDo
+        echo "SOUCE PD TRAVESTI" # ToDo
+        echo "SOUCE PD TRAVESTI" # ToDo
+        echo "SOUCE PD TRAVESTI" # ToDo
+        echo "SOUCE PD TRAVESTI" # ToDo
+        echo "SOUCE PD TRAVESTI" # ToDo
+        echo "SOUCE PD TRAVESTI" # ToDo
         __HELLSCRIPTS_REGENERATE_HELLMAP
-        __HELLSCRIPTS_EDIT_ZSHRC
     fi
 
     __HELLSCRIPTS_SETUP_LOGGER "Sourcing HellMap... -> $__HELLSCRIPTS_HELLMAP_FILEPATH"
@@ -383,7 +385,6 @@ else
     if [[ "$1" == "doUNINSTALL" ]]
     then
         __HELLSCRIPTS_UNINSTALL
-        __HELLSCRIPTS_RUN_INSTALLER
     fi
 
     if [[ "$1" == "doREINSTALL" ]]
