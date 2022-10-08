@@ -5,8 +5,7 @@ set -a
 __HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
 __HELLSCRIPTS_OLDPWD="$(pwd)"
 __HELLSCRIPTS_FOLDER="$HOME/.hellscripts"
-__HELLSCRIPTS_HELLMAP_FILEPATH="$__HELLSCRIPTS_FOLDER/.zsh_hellmap"
-__HELL_TRAP_SIGNALS="EXIT SIGKILL SIGINT"
+__HELLSCRIPTS_HELLMAP_FILEPATH="${__HELLSCRIPTS_FOLDER}/.zsh_hellmap"
 __HELLSCRIPTS_REINSTALLING=false
 __HELLSCRIPTS_LOG_FILE="${FOO:-`mktemp`}"
 
@@ -16,10 +15,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
     }
 
     function __HELLSCRIPTS_SET_AT_EXIT_TRAP {
-        if [[ $# -eq 0 ]]
-        then
+        [[ $# -eq 0 ]]  &&
             return 1
-        fi
 
         trap "${@}" EXIT SIGKILL SIGINT
     }
@@ -27,10 +24,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && unset __HELLSCRIPTS_NEW_PATH_ELM && set +a &> /dev/null"
 
     function __HELLSCRIPTS_SETUP_LOGGER {
-        if [[ $# -eq 0 ]]
-        then
-            return
-        fi
+        [[ $# -eq 0 ]] && return
         echo "[HellScripts Amnesic Setup Logger]" "${@}"
     }
 
@@ -70,16 +64,17 @@ function __HELLSCRIPTS_INJECT_FUNS {
         nano "${__HELLSCRIPTS_EDITOR_FILES}"       ||
         vi "${__HELLSCRIPTS_EDITOR_FILES}"         ||
         ne "${__HELLSCRIPTS_EDITOR_FILES}"         ||
-        __HELLSCRIPTS_SETUP_LOGGER "Can't open any editor, configure your EDITOR environment variable."  &&
+
+        __HELLSCRIPTS_SETUP_LOGGER "Can't open any editor, configure your EDITOR environment variable."
         return 1
     }
 
     function __HELLSCRIPTS_EDIT_ZSHRC {
         __HELLSCRIPTS_SETUP_LOGGER "Checking your .zshrc..."
+        touch "$HOME/.zshrc"
         if [[ ! $(cat "$HOME/.zshrc" &>/dev/null | grep "HELLSCRIPTS") ]]
         then
             __HELLSCRIPTS_SETUP_LOGGER "No mention of \"HELLSCRIPTS\" found in your .zshrc.\nInjecting..."
-            touch "$HOME/.zshrc"
             (
                 echo "# . \"$__HELLSCRIPTS_FOLDER/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file! # [HELL_CONFIG_LINE]"
                 echo
@@ -108,7 +103,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
             ) >> "$HOME/.zshrc"
             __HELLSCRIPTS_OPEN_EDITOR "$HOME/.zshrc"
         else
-            sed '/HELL_CONFIG_LINE/ s/^#//' -i "$HOME/.zshrc"
+            sed '/HELL_CONFIG_LINE/ s/^#//'  -i "$HOME/.zshrc"
             sed '/HELL_CONFIG_LINE/ s/^\s//' -i "$HOME/.zshrc"
             if $__HELLSCRIPTS_REINSTALLING
             then
@@ -126,30 +121,30 @@ function __HELLSCRIPTS_INJECT_FUNS {
         __HELLSCRIPTS_CREATE_ROOT_DIRECTORY
         rm -f "${__HELLSCRIPTS_HELLMAP_FILEPATH}"
         (
-            echo "#!/usr/bin/env zsh"                                                                                               &&
-            echo                                                                                                                    &&
-            echo "set -a"                                                                                                           &&
-            echo "__HELLSCRIPTS_REPO_ROOT=\"${__HELLSCRIPTS_REPO_ROOT}\""                                                           &&
-            echo "declare -Ax __HELLSCRIPTS_ATTR=("                                                                                 &&
-            echo "    [\"HELL_MODE\"]=true"                                                                                         &&
-            echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_STYLE\"]=false"                                                                  &&
-            echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_CONFIG\"]=true"                                                                  &&
-            echo "    [\"ENABLE_HELLSCRIPTS_UPDATE_ON_SHELL_POP\"]=true"                                                            &&
-            echo "    [\"ENABLE_HELLSCRIPTS_MACKUP_BACKUP_ON_SHELL_POP\"]=true"                                                     &&
-            echo "    [\"ENABLE_HELLSCRIPTS_LOGGING\"]=true"                                                                        &&
-            echo "    [\"ENABLE_HELLSCRIPTS_LOGGER_PROPAGATION\"]=true"                                                             &&
-            echo "    [\"ENABLE_SPLASHSCREEN_ON_SHELL_POP\"]=true"                                                                  &&
-            echo "    [\"MY_REMOTE_REPO_URI\"]=\"git@github.com:LeBlancLapin/MyHellScripts.git\""                                   &&
-            echo "    [\"MY_MACKUP_REMOTE_REPO_URI\"]=\"git@github.com:LeBlancLapin/Mackup.git\""                                   &&
-            echo "    [\"PREZTO_REMOTE_REPO_URI\"]=\"https://github.com/sorin-ionescu/prezto.git\""                                 &&
-            echo "    [\"REMOTE_GETPKG_SCRIPT_URI\"]=\"https://raw.githubusercontent.com/LeBlancLapin/hell-pkg/main/hell-getpkg\""  &&
-            echo "    [\"REPO_DIR\"]=\"${__HELLSCRIPTS_REPO_ROOT}\""                                                                &&
-            echo "    [\"MACKUP_REPO_DIR\"]=\"$HOME/.config/mackup_backup/Mackup\""                                                 &&
-            echo "    [\"PREZTO_REPO_DIR\"]=\"${ZDOTDIR:-$HOME}/.zprezto\""                                                         &&
-            echo "    [\"SETUP_FILEPATH\"]=\"${__HELLSCRIPTS_REPO_ROOT/sHell/hell-installer}\""                                     &&
-            echo "    [\"MACKUP_CONFIG_FILEPATH\"]=\"~/.mackup.cfg\""                                                               &&
-            echo "    [\"MEMO_RUNTIME_ERROR\"]=false"                                                                               &&
-            echo ")"                                                                                                                &&
+            echo "#!/usr/bin/env zsh"
+            echo
+            echo "set -a"
+            echo "__HELLSCRIPTS_REPO_ROOT=\"${__HELLSCRIPTS_REPO_ROOT}\""
+            echo "declare -Ax __HELLSCRIPTS_ATTR=("
+            echo "    [\"HELL_MODE\"]=true"
+            echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_STYLE\"]=false"
+            echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_CONFIG\"]=true"
+            echo "    [\"ENABLE_HELLSCRIPTS_UPDATE_ON_SHELL_POP\"]=true"
+            echo "    [\"ENABLE_HELLSCRIPTS_MACKUP_BACKUP_ON_SHELL_POP\"]=true"
+            echo "    [\"ENABLE_HELLSCRIPTS_LOGGING\"]=true"
+            echo "    [\"ENABLE_HELLSCRIPTS_LOGGER_PROPAGATION\"]=true"
+            echo "    [\"ENABLE_SPLASHSCREEN_ON_SHELL_POP\"]=true"
+            echo "    [\"MY_REMOTE_REPO_URI\"]=\"git@github.com:LeBlancLapin/MyHellScripts.git\""
+            echo "    [\"MY_MACKUP_REMOTE_REPO_URI\"]=\"git@github.com:LeBlancLapin/Mackup.git\""
+            echo "    [\"PREZTO_REMOTE_REPO_URI\"]=\"https://github.com/sorin-ionescu/prezto.git\""
+            echo "    [\"REMOTE_GETPKG_SCRIPT_URI\"]=\"https://raw.githubusercontent.com/LeBlancLapin/hell-pkg/main/hell-getpkg\""
+            echo "    [\"REPO_DIR\"]=\"${__HELLSCRIPTS_REPO_ROOT}\""
+            echo "    [\"MACKUP_REPO_DIR\"]=\"$HOME/.config/mackup_backup/Mackup\""
+            echo "    [\"PREZTO_REPO_DIR\"]=\"${ZDOTDIR:-$HOME}/.zprezto\""
+            echo "    [\"SETUP_FILEPATH\"]=\"${__HELLSCRIPTS_REPO_ROOT/sHell/hell-installer}\""
+            echo "    [\"MACKUP_CONFIG_FILEPATH\"]=\"~/.mackup.cfg\""
+            echo "    [\"MEMO_RUNTIME_ERROR\"]=false"
+            echo ")"
             echo "set +a"
         ) >> "${__HELLSCRIPTS_HELLMAP_FILEPATH}"
 
@@ -189,26 +184,22 @@ function __HELLSCRIPTS_INJECT_FUNS {
         __HELLSCRIPTS_FIRST_BYTE=$(__HELLSCRIPTS_GET_FIRST_BYTE_PIPED)
         __HELLSCRIPTS_FIRST_BYTE=`awk -v first_byte="${__HELLSCRIPTS_FIRST_BYTE}" 'BEGIN{printf "%c", first_byte}'`
 
-        if [[ -z "$__HELLSCRIPTS_FIRST_BYTE" ]]
+        if [[ -z $__HELLSCRIPTS_FIRST_BYTE ]]
         then
             __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_WRITE_LOGS: Well tried, but I won't let you inject anything here."
             return 1
         fi
 
-        [[ $# -ne 0 ]] &&
+        [[ $# -ne 0 ]]  &&
             __HELLSCRIPTS_LOGGER_CURRENT_FILE="${1}"
 
-        if [[ $# -gt 1 ]]
-        then
+        [[ $# -gt 1 ]]  &&
             return 7
-        fi
 
-        if [[ ! -f "$__HELLSCRIPTS_LOG_FILE" && ! -f "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" ]]
-        then
+        [[ ! -f "$__HELLSCRIPTS_LOG_FILE" && ! -f "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" ]]  &&
             return 2
-        fi
 
-        [[ -z "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" ]] &&
+        [[ -z "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" ]]  &&
             __HELLSCRIPTS_LOGGER_CURRENT_FILE="${__HELLSCRIPTS_LOG_FILE}"
 
         read line
@@ -230,14 +221,14 @@ function __HELLSCRIPTS_INJECT_FUNS {
     type __HELLSCRIPTS_ERROR_LOGGER &> /dev/null  && unset -f -- __HELLSCRIPTS_ERROR_LOGGER
 
     function __HELLSCRIPTS_LOGGER {
-        if "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]"
+        if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
         then
             2>&1 echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS
         fi
     }
 
     function __HELLSCRIPTS_ERROR_LOGGER {
-        if "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]"
+        if $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
         then
             >&2 echo -e "[HellScripts ERROR] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS
         fi
@@ -263,18 +254,13 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_IS_COMMAND_IMPORTED..."
     function __HELLSCRIPTS_IS_COMMAND_IMPORTED {
-        if [[ $# -eq 0 ]]
-        then
-            __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_IS_COMMAND_IMPORTED: wrong number of arguments (expected 1, got 0)"
+        [[ $# -eq 0 ]]                                                                                                     &&
+            __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_IS_COMMAND_IMPORTED: wrong number of arguments (expected 1, got 0)"  &&
             return 7
-        fi
 
         for cmd in $@
         do
-            if ! command -v "${cmd}" &> /dev/null
-            then
-                return false
-            fi
+            if ! command -v "${cmd}" &> /dev/null; then return false; fi
         done
 
         true
@@ -282,30 +268,21 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY..."
     function __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY {
-        if [[ $# -eq 0 ]]
-        then
-            __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_SETUP_APPEND_DEPENDENCY: wrong number of arguments (expected 1, got 0)"
+        [[ $# -eq 0 ]]                                                                                                         &&
+            __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_SETUP_APPEND_DEPENDENCY: wrong number of arguments (expected 1, got 0)"  &&
             return 1
-        fi
 
         for pkg in $@
         do
-            if ! __HELLSCRIPTS_IS_COMMAND_IMPORTED "${pkg}"
-            then
-                __HELLSCRIPTS_LOGGER "Installing ${pkg}..."  &&
-                __HELLSCRIPTS_REMOTE_EXECUTION "${__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]}" "${pkg}"
-            fi
+            if ! __HELLSCRIPTS_IS_COMMAND_IMPORTED "${pkg}"; then __HELLSCRIPTS_LOGGER "Installing ${pkg}..." && __HELLSCRIPTS_REMOTE_EXECUTION "${__HELLSCRIPTS_ATTR[REMOTE_GETPKG_SCRIPT_URI]}" "${pkg}"; fi
         done
     }
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_REMOTE_EXECUTION..."
     function __HELLSCRIPTS_REMOTE_EXECUTION {
-        if [[ $# -eq 0 ]]
-        then
-            __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_REMOTE_EXECUTION: wrong number of arguments (expected 1, got 0)"
+        [[ $# -eq 0 ]]                                                                                                  &&
+            __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_REMOTE_EXECUTION: wrong number of arguments (expected 1, got 0)"  &&
             return 7
-        fi
-
         (
             bash <(curl -Ls "$1") "${@: 2}"    ||
             bash <(wget -qO- "$1") "${@: 2}"   ||
@@ -320,10 +297,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     __HELLSCRIPTS_SETUP_LOGGER "Injected HellScripts core functions..."
 
     __HELLSCRIPTS_SETUP_LOGGER "Initializing Setup..."
-    if [[ ! -f "$__HELLSCRIPTS_HELLMAP_FILEPATH" ]]
-    then
-        __HELLSCRIPTS_REGENERATE_HELLMAP
-    fi
+    if [[ ! -f "$__HELLSCRIPTS_HELLMAP_FILEPATH" ]]; then __HELLSCRIPTS_REGENERATE_HELLMAP; fi
 
     __HELLSCRIPTS_SETUP_LOGGER "Sourcing HellMap... -> ${__HELLSCRIPTS_HELLMAP_FILEPATH}"
     . "${__HELLSCRIPTS_HELLMAP_FILEPATH}"
@@ -337,10 +311,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
 
     __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY "git" "zsh" "curl" "awk"
     __HELLSCRIPTS_SETUP_LOGGER "Checking if you have imported HellScripts Repo..."
-    if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]
-    then
-        __HELLSCRIPTS_CLONE_REPO
-    fi
+    if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]; then __HELLSCRIPTS_CLONE_REPO; fi
 
     __HELLSCRIPTS_INITIALIZE_ZSH_SESSION
 
@@ -365,20 +336,14 @@ if [[ $# -eq 0 ]]
 then
     __HELLSCRIPTS_RUN_INSTALLER
 else
-    if [[ "${1}" == "doINSTALL" ]]
-    then
+    [[ "${1}" == "doINSTALL" ]]  &&
         __HELLSCRIPTS_RUN_INSTALLER
-    fi
 
-    if [[ "${1}" == "doUNINSTALL" ]]
-    then
+    [[ "${1}" == "doUNINSTALL" ]]  &&
         __HELLSCRIPTS_UNINSTALL
-    fi
 
-    if [[ "${1}" == "doREINSTALL" ]]
-    then
-        __HELLSCRIPTS_REINSTALLING=true
-        __HELLSCRIPTS_UNINSTALL
+    [[ "${1}" == "doREINSTALL" ]]        &&
+        __HELLSCRIPTS_REINSTALLING=true  &&
+        __HELLSCRIPTS_UNINSTALL          &&
         __HELLSCRIPTS_RUN_INSTALLER
-    fi
 fi
