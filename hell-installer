@@ -187,7 +187,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
             2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
             while read l
             do
-                echo -ne "$line" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" 2>&1
+                2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
             done
         fi
         echo -e "\n" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
