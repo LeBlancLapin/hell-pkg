@@ -5,10 +5,10 @@ set -a
 __HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
 __HELLSCRIPTS_OLDPWD="$(pwd)"
 __HELLSCRIPTS_FOLDER="$HOME/.hellscripts"
+__HELLSCRIPTS_REPO_PATH="$__HELLSCRIPTS_FOLDER/MyHellScripts"
 __HELLSCRIPTS_HELLMAP_FILEPATH="$__HELLSCRIPTS_FOLDER/.zsh_hellmap"
 __HELLSCRIPTS_REINSTALLING=false
 __HELLSCRIPTS_LOG_FILE="${FOO:-`mktemp`}"
-__HELLSCRIPTS_REPO_ROOT="$__HELLSCRIPTS_FOLDER/MyHellScripts"
 __HELLSCRIPTS_ZSHRC_FILEPATH="$HOME/.zshrc"
 
 function __HELLSCRIPTS_INJECT_FUNS {
@@ -50,13 +50,15 @@ function __HELLSCRIPTS_INJECT_FUNS {
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_CLONE_REPO..."
     function __HELLSCRIPTS_CLONE_REPO {
         __HELLSCRIPTS_LOGGER "Importing HellScripts core..."
+        __HELLSCRIPTS_SETUP_LOGGER "Will clone $__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]"
+        __HELLSCRIPTS_SETUP_LOGGER "Into $__HELLSCRIPTS_FOLDER/MyHellScripts"
         cd -P ~  &&
         (
-            git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" "$__HELLSCRIPTS_REPO_ROOT" --recurse-submodules |
+            git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" "$__HELLSCRIPTS_REPO_PATH" --recurse-submodules |
             __HELLSCRIPTS_WRITE_LOGS
         )
 
-        if [[ ! -d "$__HELLSCRIPTS_REPO_ROOT" ]]
+        if [[ ! -d "$__HELLSCRIPTS_REPO_PATH" ]]
         then
             __HELLSCRIPTS_INSTALLER_EPIC_FAILED=true
         fi
@@ -134,7 +136,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
             echo "#!/usr/bin/env zsh"
             echo
             echo "set -a"
-            echo "__HELLSCRIPTS_REPO_ROOT=\"$__HELLSCRIPTS_REPO_ROOT\""
+            echo "__HELLSCRIPTS_REPO_PATH=\"$__HELLSCRIPTS_REPO_PATH\""
             echo "declare -Ax __HELLSCRIPTS_ATTR=("
             echo "    [\"HELL_MODE\"]=true"
             echo "    [\"ENABLE_MANJARO_ZSH_PROMPT_STYLE\"]=false"
@@ -148,10 +150,10 @@ function __HELLSCRIPTS_INJECT_FUNS {
             echo "    [\"MY_MACKUP_REMOTE_REPO_URI\"]=\"git@github.com:LeBlancLapin/Mackup.git\""
             echo "    [\"PREZTO_REMOTE_REPO_URI\"]=\"https://github.com/sorin-ionescu/prezto.git\""
             echo "    [\"REMOTE_GETPKG_SCRIPT_URI\"]=\"https://raw.githubusercontent.com/LeBlancLapin/hell-pkg/main/hell-getpkg\""
-            echo "    [\"REPO_DIR\"]=\"$__HELLSCRIPTS_REPO_ROOT\""
+            echo "    [\"REPO_DIR\"]=\"$__HELLSCRIPTS_REPO_PATH\""
             echo "    [\"MACKUP_REPO_DIR\"]=\"$HOME/.config/mackup_backup/Mackup\""
             echo "    [\"PREZTO_REPO_DIR\"]=\"${ZDOTDIR:-$HOME}/.zprezto\""
-            echo "    [\"SETUP_FILEPATH\"]=\"$__HELLSCRIPTS_REPO_ROOT/sHell/hell-installer\""
+            echo "    [\"SETUP_FILEPATH\"]=\"$__HELLSCRIPTS_REPO_PATH/sHell/hell-installer\""
             echo "    [\"MACKUP_CONFIG_FILEPATH\"]=\"~/.mackup.cfg\""
             echo "    [\"MEMO_RUNTIME_ERROR\"]=false"
             echo ")"
@@ -174,8 +176,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         . "$__HELLSCRIPTS_HELLMAP_FILEPATH"
         rm -rf "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]"
         rm -f "$__HELLSCRIPTS_HELLMAP_FILEPATH"
-        sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#&/' -i "$__HELLSCRIPTS_ZSHRC_PATH"
-        sed 's/\(#\)\1\+/\1/g' -i "$__HELLSCRIPTS_ZSHRC_PATH" # * ... ToDo: remember wtf is that
+        sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#\ &/' -i "$__HELLSCRIPTS_ZSHRC_PATH"
         rm -rf "$__HELLSCRIPTS_FOLDER"
     }
 
@@ -186,10 +187,10 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_WRITE_LOGS..."
     function __HELLSCRIPTS_WRITE_LOGS {
-        # * ... Securing the pipe call
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOGGER_CURRENT_FILE && unset __HELLSCRIPTS_FIRST_BYTE &> /dev/null"
         __HELLSCRIPTS_LOGGER_CURRENT_FILE=""
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOGGER_CURRENT_FILE && unset __HELLSCRIPTS_LOG_FILE && unset __HELLSCRIPTS_FIRST_BYTE &> /dev/null"
 
+        # * ... Securing the piped call
         __HELLSCRIPTS_FIRST_BYTE=$(__HELLSCRIPTS_GET_FIRST_BYTE_PIPED)
         __HELLSCRIPTS_FIRST_BYTE=`awk -v first_byte="$__HELLSCRIPTS_FIRST_BYTE" 'BEGIN{printf "%c", first_byte}'`
 
