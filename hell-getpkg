@@ -4,7 +4,7 @@ declare -a __HELLSCRIPTS_PkgManagersArray=("pacman" "pamac" "apt" "dnf" "yum" "z
 
 function __HELLSCRIPTS_INFER_PKG_MANAGER {
     echo -ne ""
-    for cur_pkg_manager in ${__HELLSCRIPTS_PkgManagersArray[@]}
+    for cur_pkg_manager in $__HELLSCRIPTS_PkgManagersArray[@]
     do
         if [[ command -v "$cur_pkg_manager" &> /dev/null ]]
         then
