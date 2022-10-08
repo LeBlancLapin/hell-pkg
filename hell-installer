@@ -284,6 +284,13 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     }
 
     function __HELLSCRIPTS_REGENERATE_HELLMAP {
+        echo "SOUCE PD TRAVESTI"
+        echo "SOUCE PD TRAVESTI"
+        echo "SOUCE PD TRAVESTI"
+        echo "SOUCE PD TRAVESTI"
+        echo "SOUCE PD TRAVESTI"
+        echo "SOUCE PD TRAVESTI"
+        echo "SOUCE PD TRAVESTI"
         __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_NEW_PATH_ELM && unset __HELLSCRIPTS_REPO_ROOT && unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED &> /dev/null"
 
         __HELLSCRIPTS_REPO_ROOT="$__HELLSCRIPTS_FOLDER/MyHellScripts"
@@ -321,13 +328,6 @@ function __HELLSCRIPTS_RUN_INSTALLER {
 
     if [[ ! -f "$__HELLSCRIPTS_HELLMAP_FILEPATH" ]]
     then
-        echo "SOUCE PD TRAVESTI" # ToDo
-        echo "SOUCE PD TRAVESTI" # ToDo
-        echo "SOUCE PD TRAVESTI" # ToDo
-        echo "SOUCE PD TRAVESTI" # ToDo
-        echo "SOUCE PD TRAVESTI" # ToDo
-        echo "SOUCE PD TRAVESTI" # ToDo
-        echo "SOUCE PD TRAVESTI" # ToDo
         __HELLSCRIPTS_REGENERATE_HELLMAP
     fi
 
@@ -372,10 +372,7 @@ if [[ $# -eq 0 ]]
 then
     __HELLSCRIPTS_RUN_INSTALLER
 else
-    if [[ "$1" == "doINJECT" ]]
-    then
-        __HELLSCRIPTS_INJECT_FUNS
-    fi
+    __HELLSCRIPTS_INJECT_FUNS
 
     if [[ "$1" == "doINSTALL" ]]
     then
