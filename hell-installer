@@ -344,11 +344,10 @@ function __HELLSCRIPTS_RUN_INSTALLER {
         __HELLSCRIPTS_ERROR_LOGGER "\nWell tried, wkwkwk.\n" \
         "Are you aware this is just a gitmodule which I made public,\n" \
         "only an artefact from a several dozens of thousands lines of code project?\n" \
-        "I love u qt."
-    else
-        .propagate_hell_zshmess
+        "I love u qt." && unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED && return 1
     fi
     unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED
+    . .propagate_hell_zshmess
 }
 
 __HELLSCRIPTS_INJECT_FUNS
