@@ -190,7 +190,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         type __HELLSCRIPTS_LOGGER &> /dev/null        && unset -f -- __HELLSCRIPTS_LOGGER
         type __HELLSCRIPTS_ERROR_LOGGER &> /dev/null  && unset -f -- __HELLSCRIPTS_ERROR_LOGGER
 
-        if __HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
+        if "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]"
         then
             function __HELLSCRIPTS_LOGGER {
                 if "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]"
