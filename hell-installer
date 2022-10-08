@@ -31,12 +31,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && set +a &> /dev/null"
 
-    function __HELLSCRIPTS_SETUP_LOGGER {
-        if [[ $# -eq 0 ]]; then return; fi
-
-        echo "[HellScripts Amnesic Setup Logger]" "$@"
-    }
-
     function __HELLSCRIPTS_SET_ZSH_AS_DEFAULT_SHELL {
         if [[ ! $(readlink /proc/$$/exe &> /dev/null | grep "zsh") ]]
         then
@@ -73,7 +67,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         nano "$__HELLSCRIPTS_EDITOR_FILES"       ||
         vi "$__HELLSCRIPTS_EDITOR_FILES"         ||
         ne "$__HELLSCRIPTS_EDITOR_FILES"         ||
-        __HELLSCRIPTS_SETUP_LOGGER "Can't open any editor, configure your EDITOR environment variable."  &&
+        >&2 echo "Can't open any editor, configure your EDITOR environment variable."  &&
         return 1
     }
 
@@ -81,7 +75,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
         touch "$__HELLSCRIPTS_ZSHRC_FILEPATH"
         if [[ ! -f "$__HELLSCRIPTS_ZSHRC_FILEPATH" || ! $(cat "$__HELLSCRIPTS_ZSHRC_FILEPATH" &>/dev/null | grep "HELLSCRIPTS") ]]
         then
-            __HELLSCRIPTS_SETUP_LOGGER "No mention of \"HELLSCRIPTS\" found in your .zshrc.\nInjecting..."
             (
                 echo "# __HELLSCRIPTS_OLDPWD=\"\${__HELLSCRIPTS_OLDPWD:-\`pwd\`}\" # [HELL_CONFIG_LINE]"
                 echo "# __HELLSCRIPTS_LOG_FILE=\"\${__HELLSCRIPTS_LOG_FILE:-\`mktemp\`}\" # [HELL_CONFIG_LINE]"
@@ -121,7 +114,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
     }
 
     function __HELLSCRIPTS_REGENERATE_HELLMAP {
-        __HELLSCRIPTS_SETUP_LOGGER "Building Hellmap anew, reseting your crappy config."
         __HELLSCRIPTS_CREATE_ROOT_DIRECTORY
         rm -f "$__HELLSCRIPTS_HELLMAP_FILEPATH"
         (
@@ -277,12 +269,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
 function __HELLSCRIPTS_RUN_INSTALLER {
     __HELLSCRIPTS_INJECT_FUNS
-    __HELLSCRIPTS_SETUP_LOGGER "Injected HellScripts core functions..."
-
-    __HELLSCRIPTS_SETUP_LOGGER "Initializing Setup..."
     if [[ ! -f "$__HELLSCRIPTS_HELLMAP_FILEPATH" ]]; then __HELLSCRIPTS_REGENERATE_HELLMAP; fi
-
-    __HELLSCRIPTS_SETUP_LOGGER "Sourcing HellMap... -> $__HELLSCRIPTS_HELLMAP_FILEPATH"
     . "$__HELLSCRIPTS_HELLMAP_FILEPATH"
 
     __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY "git" "zsh" "curl" "awk"
