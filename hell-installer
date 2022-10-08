@@ -13,7 +13,7 @@ __HELLSCRIPTS_ZSHRC_FILEPATH="$HOME/.zshrc"
 
 function __HELLSCRIPTS_INJECT_FUNS {
     function __HELLSCRIPTS_CREATE_ROOT_DIRECTORY {
-        if [[ ! -d $__HELLSCRIPTS_FOLDER ]]
+        if [[ ! -d "$__HELLSCRIPTS_FOLDER" ]]
         then
             mkdir "$__HELLSCRIPTS_FOLDER" &> /dev/null
         fi
@@ -31,10 +31,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && set +a &> /dev/null"
 
     function __HELLSCRIPTS_SETUP_LOGGER {
-        if [[ $# -eq 0 ]]
-        then
-            return
-        fi
+        if [[ $# -eq 0 ]]; then return; fi
 
         echo "[HellScripts Amnesic Setup Logger]" "$@"
     }
@@ -50,8 +47,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_CLONE_REPO..."
     function __HELLSCRIPTS_CLONE_REPO {
         __HELLSCRIPTS_LOGGER "Importing HellScripts core..."
-        __HELLSCRIPTS_SETUP_LOGGER "Will clone $__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]"
-        __HELLSCRIPTS_SETUP_LOGGER "Into $__HELLSCRIPTS_FOLDER/MyHellScripts"
         cd -P ~  &&
         (
             git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" "$__HELLSCRIPTS_REPO_PATH" --recurse-submodules |
@@ -244,11 +239,11 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     if ! $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]
     then
-        __HELLSCRIPTS_SETUP_LOGGER "(Name squatting __HELLSCRIPTS_LOGGER: Phony function)..."
-        __HELLSCRIPTS_SETUP_LOGGER "(Name squatting __HELLSCRIPTS_ERROR_LOGGER: Phony function)..."
         __HELLSCRIPTS_DROP_LOGGER
         function __HELLSCRIPTS_LOGGER {}
         function __HELLSCRIPTS_ERROR_LOGGER {}
+        __HELLSCRIPTS_SETUP_LOGGER "(Name squatting __HELLSCRIPTS_LOGGER: Phony function)..."
+        __HELLSCRIPTS_SETUP_LOGGER "(Name squatting __HELLSCRIPTS_ERROR_LOGGER: Phony function)..."
     fi
 
     __HELLSCRIPTS_LOGGER "Injected __HELLSCRIPTS_LOGGER..."
@@ -311,7 +306,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
         __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_NEW_PATH_ELM &> /dev/null"
         __HELLSCRIPTS_NEW_PATH_ELM=$(eval __HELLSCRIPTS_FETCH_PATHES)
         PATH="$PATH:$__HELLSCRIPTS_NEW_PATH_ELM"
-        __HELLSCRIPTS_LOGGER "Updated PATH with values: $__HELLSCRIPTS_NEW_PATH_ELM"
+        __HELLSCRIPTS_LOGGER "Updated PATH with values:\n" \
+                             "$__HELLSCRIPTS_NEW_PATH_ELM"
     }
 }
 
@@ -353,7 +349,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
 __HELLSCRIPTS_INJECT_FUNS
 if [[ $# -eq 0 ]]
 then
-    __HELLSCRIPTS_RUN_INSTALLER
+    return
 else
     if [[ "$1" == "doINSTALL" ]]
     then
