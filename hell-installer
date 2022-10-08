@@ -346,7 +346,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
         "only an artefact from a several dozens of thousands lines of code project?\n" \
         "I love u qt."
     else
-        . .propagate_hell_zshmess
+        .propagate_hell_zshmess
     fi
     unset __HELLSCRIPTS_INSTALLER_EPIC_FAILED
 }
