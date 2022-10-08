@@ -228,23 +228,21 @@ function __HELLSCRIPTS_INJECT_FUNS {
         type __HELLSCRIPTS_LOGGER &> /dev/null        && unset -f -- __HELLSCRIPTS_LOGGER
         type __HELLSCRIPTS_ERROR_LOGGER &> /dev/null  && unset -f -- __HELLSCRIPTS_ERROR_LOGGER
 
-        if "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]"
-        then
-            function __HELLSCRIPTS_LOGGER {
-                if "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]"
-                then
-                    2>&1 echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS
-                fi
-            }
+        function __HELLSCRIPTS_LOGGER {
+            if "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]"
+            then
+                2>&1 echo -e "[HellScripts] ${@}" | __HELLSCRIPTS_WRITE_LOGS
+            fi
+        }
 
-            __HELLSCRIPTS_LOGGER "Injected __HELLSCRIPTS_LOGGER..."
-            __HELLSCRIPTS_LOGGER "Injecting __HELLSCRIPTS_ERROR_LOGGER..."
-            function __HELLSCRIPTS_ERROR_LOGGER {
-                if "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]"
-                then
-                    >&2 echo -e "[HellScripts ERROR] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS
-                fi
-            }
+        __HELLSCRIPTS_LOGGER "Injected __HELLSCRIPTS_LOGGER..."
+        __HELLSCRIPTS_LOGGER "Injecting __HELLSCRIPTS_ERROR_LOGGER..."
+        function __HELLSCRIPTS_ERROR_LOGGER {
+            if "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]"
+            then
+                >&2 echo -e "[HellScripts ERROR] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS
+            fi
+        }
         else
             __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_LOGGER (Name squatting: Phony function)..."
             __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_ERROR_LOGGER (Name squatting: Phony function)..."
