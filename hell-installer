@@ -55,7 +55,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
             git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" "$__HELLSCRIPTS_REPO_ROOT" --recurse-submodules |
             __HELLSCRIPTS_WRITE_LOGS
         )
-        if ! -d "$__HELLSCRIPTS_REPO_ROOT"
+        if [[ ! -d "$__HELLSCRIPTS_REPO_ROOT" ]]
         then
             __HELLSCRIPTS_INSTALLER_EPIC_FAILED=true
         fi
@@ -262,7 +262,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
         for cmd in $@
         do
-            if ! command -v "$cmd" &> /dev/null; then return false; fi
+            if [[ ! command -v "$cmd" &> /dev/null ]]; then return false; fi
         done
 
         true
