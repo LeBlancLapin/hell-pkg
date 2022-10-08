@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+set -a
+
 __HELLSCRIPTS_INSTALLER_EPIC_FAILED=false
 __HELLSCRIPTS_OLDPWD="$(pwd)"
 __HELLSCRIPTS_FOLDER="$HOME/.hellscripts"
@@ -22,7 +24,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         trap "${@}" EXIT SIGKILL SIGINT
     }
 
-    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING &> /dev/null"
+    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && set +a &> /dev/null"
 
     function __HELLSCRIPTS_SETUP_LOGGER {
         if [[ $# -eq 0 ]]
