@@ -235,8 +235,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
             fi
         }
 
-        __HELLSCRIPTS_LOGGER "Injected __HELLSCRIPTS_LOGGER..."
-        __HELLSCRIPTS_LOGGER "Injecting __HELLSCRIPTS_ERROR_LOGGER..."
         function __HELLSCRIPTS_ERROR_LOGGER {
             if "$__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING]"
             then
@@ -246,11 +244,14 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
         if [[ ! $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
         then
-            __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_LOGGER (Name squatting: Phony function)..."
-            __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_ERROR_LOGGER (Name squatting: Phony function)..."
+            __HELLSCRIPTS_SETUP_LOGGER "(Name squatting __HELLSCRIPTS_LOGGER: Phony function)..."
+            __HELLSCRIPTS_SETUP_LOGGER "(Name squatting __HELLSCRIPTS_ERROR_LOGGER: Phony function)..."
             function __HELLSCRIPTS_LOGGER {}
             function __HELLSCRIPTS_ERROR_LOGGER {}
         fi
+
+        __HELLSCRIPTS_LOGGER "Injected __HELLSCRIPTS_LOGGER..."
+        __HELLSCRIPTS_LOGGER "Injected __HELLSCRIPTS_ERROR_LOGGER..."
     }
 
     __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_FETCH_PATHES..."
