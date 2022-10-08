@@ -158,11 +158,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
         __HELLSCRIPTS_EDIT_ZSHRC
     }
 
-    function __HELLSCRIPTS_GET_FIRST_BYTE_PIPED {
-        # * ... Hack in the matrix
-        return $(dd bs=1 count=1 2>/dev/null | od -t o1 -A n | tr -dc 0-9)
-    }
-
     function __HELLSCRIPTS_UNINSTALL {
         [[ ! -f "$__HELLSCRIPTS_HELLMAP_FILEPATH" ]] && __HELLSCRIPTS_REGENERATE_HELLMAP
         . "$__HELLSCRIPTS_HELLMAP_FILEPATH"
@@ -177,18 +172,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
     }
 
     function __HELLSCRIPTS_WRITE_LOGS {
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOGGER_CURRENT_FILE && unset __HELLSCRIPTS_FIRST_BYTE &> /dev/null"
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOGGER_CURRENT_FILE &> /dev/null"
         __HELLSCRIPTS_LOGGER_CURRENT_FILE=""
-
-        # * ... Securing the piped call
-        __HELLSCRIPTS_FIRST_BYTE=$(__HELLSCRIPTS_GET_FIRST_BYTE_PIPED)
-        __HELLSCRIPTS_FIRST_BYTE=`awk -v first_byte="$__HELLSCRIPTS_FIRST_BYTE" 'BEGIN{printf "%c", first_byte}'`
-
-        if [[ -z $__HELLSCRIPTS_FIRST_BYTE ]]
-        then
-            __HELLSCRIPTS_ERROR_LOGGER "__HELLSCRIPTS_WRITE_LOGS: Well tried, but I won't let you inject anything here."
-            return 1
-        fi
 
         if [[ $# -ne 0 ]]; then __HELLSCRIPTS_LOGGER_CURRENT_FILE="$1"; fi
         if [[ $# -gt 1 ]]; then return 7; fi
@@ -198,7 +183,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
         read line
         if [[ $line ]]
         then
-            line="$__HELLSCRIPTS_FIRST_BYTE$line"
             echo -e $(date) >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
             2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
             while read l
