@@ -176,7 +176,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         . "$__HELLSCRIPTS_HELLMAP_FILEPATH"
         rm -rf "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]"
         rm -f "$__HELLSCRIPTS_HELLMAP_FILEPATH"
-        sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#\ &/' -i "$__HELLSCRIPTS_ZSHRC_PATH"
+        sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#\ &/' -i "$__HELLSCRIPTS_ZSHRC_FILEPATH"
         rm -rf "$__HELLSCRIPTS_FOLDER"
     }
 
