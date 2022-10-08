@@ -39,11 +39,8 @@ function __HELLSCRIPTS_INJECT_FUNS {
     }
 
     function __HELLSCRIPTS_CLONE_REPO {
-        cd  "$HOME"  &&
-        (
-            2>&1 git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" "$__HELLSCRIPTS_REPO_PATH" --recurse-submodules |
-            __HELLSCRIPTS_WRITE_LOGS
-        )
+        2>&1 git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" "$__HELLSCRIPTS_REPO_PATH" --recurse-submodules |
+        __HELLSCRIPTS_WRITE_LOGS
 
         if [[ ! -d "$__HELLSCRIPTS_REPO_PATH" ]]
         then
@@ -275,10 +272,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY "git" "zsh" "curl" "awk"
     __HELLSCRIPTS_LOGGER "Checking if you have imported HellScripts Repo..."
     if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]; then __HELLSCRIPTS_CLONE_REPO; fi
-    cd "$__HELLSCRIPTS_REPO_PATH"  &&
-    (
-        2>&1 git submodule update --remote | __HELLSCRIPTS_WRITE_LOGS
-    )
+    2>&1 git -C "$__HELLSCRIPTS_REPO_PATH" submodule update --remote | __HELLSCRIPTS_WRITE_LOGS
 
     __HELLSCRIPTS_SET_ZSH_AS_DEFAULT_SHELL
     __HELLSCRIPTS_INJECT_PATHES
