@@ -243,7 +243,9 @@ function __HELLSCRIPTS_INJECT_FUNS {
                 >&2 echo -e "[HellScripts ERROR] ${@}" 2>&1 | __HELLSCRIPTS_WRITE_LOGS
             fi
         }
-        else
+
+        if [[ ! $__HELLSCRIPTS_ATTR[ENABLE_HELLSCRIPTS_LOGGING] ]]
+        then
             __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_LOGGER (Name squatting: Phony function)..."
             __HELLSCRIPTS_SETUP_LOGGER "Injecting __HELLSCRIPTS_ERROR_LOGGER (Name squatting: Phony function)..."
             function __HELLSCRIPTS_LOGGER {}
