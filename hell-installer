@@ -28,7 +28,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         trap "$@" EXIT SIGKILL SIGINT
     }
 
-    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && unset __HELLSCRIPTS_REPO_ROOT && set +a &> /dev/null"
+    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && set +a &> /dev/null"
 
     function __HELLSCRIPTS_SETUP_LOGGER {
         if [[ $# -eq 0 ]]
@@ -55,6 +55,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
             git clone "$__HELLSCRIPTS_ATTR[MY_REMOTE_REPO_URI]" "$__HELLSCRIPTS_REPO_ROOT" --recurse-submodules |
             __HELLSCRIPTS_WRITE_LOGS
         )
+
         if [[ ! -d "$__HELLSCRIPTS_REPO_ROOT" ]]
         then
             __HELLSCRIPTS_INSTALLER_EPIC_FAILED=true
@@ -262,7 +263,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
         for cmd in $@
         do
-            if [[ ! command -v "$cmd" &> /dev/null ]]; then return false; fi
+            if ! command -v "$cmd" &> /dev/null; then return false; fi
         done
 
         true
