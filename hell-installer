@@ -83,7 +83,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         then
             __HELLSCRIPTS_SETUP_LOGGER "No mention of \"HELLSCRIPTS\" found in your .zshrc.\nInjecting..."
             (
-                echo "# __HELLSCRIPTS_LOG_FILE=\"\${__HELLSCRIPTS_LOG_FILE:-\`mktemp\`}\""
+                echo "# __HELLSCRIPTS_LOG_FILE=\"\${__HELLSCRIPTS_LOG_FILE:-\`mktemp\`}\" # [HELL_CONFIG_LINE]"
                 echo "# . \"$__HELLSCRIPTS_FOLDER/.zsh_hellmap\" # * ... This goes at the top of your .zshrc file! # [HELL_CONFIG_LINE]"
                 echo
                 echo "# if \"\$__HELLSCRIPTS_ATTR[ENABLE_MANJARO_ZSH_PROMPT_STYLE]\" # [HELL_CONFIG_LINE]"
