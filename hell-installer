@@ -276,6 +276,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
                 echo "#    . \"\${__HELLSCRIPTS_ATTR[SETUP_FILEPATH]}\" \"doINSTALL\" # [HELL_CONFIG_LINE]"
                 echo "# fi # [HELL_CONFIG_LINE]"
             ) >> "$HOME/.zshrc"
+            __HELLSCRIPTS_OPEN_EDITOR "$HOME/.zshrc"
         fi
     }
 
@@ -316,8 +317,8 @@ function __HELLSCRIPTS_RUN_INSTALLER {
             echo "set +a"
         ) >> "${__HELLSCRIPTS_HELLMAP_FILEPATH}"
 
-        __HELLSCRIPTS_EDIT_ZSHRC
         __HELLSCRIPTS_OPEN_EDITOR "${__HELLSCRIPTS_HELLMAP_FILEPATH}"
+        __HELLSCRIPTS_EDIT_ZSHRC
     }
 
     if [[ ! -f "$__HELLSCRIPTS_HELLMAP_FILEPATH" ]]
