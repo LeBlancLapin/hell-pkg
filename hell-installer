@@ -272,9 +272,7 @@ function __HELLSCRIPTS_RUN_INSTALLER {
     __HELLSCRIPTS_SETUP_APPEND_DEPENDENCY "git" "zsh" "curl" "awk"
     __HELLSCRIPTS_LOGGER "Checking if you have imported HellScripts Repo..."
     if [[ ! -d "$__HELLSCRIPTS_ATTR[REPO_DIR]" ]]; then __HELLSCRIPTS_CLONE_REPO; fi
-    echo "DEBUG TEST"
     2>&1 git -C "$__HELLSCRIPTS_ATTR[REPO_DIR]" submodule update --remote | __HELLSCRIPTS_WRITE_LOGS
-    echo "DEBUG TEST"
 
     __HELLSCRIPTS_SET_ZSH_AS_DEFAULT_SHELL
     __HELLSCRIPTS_INJECT_PATHES
