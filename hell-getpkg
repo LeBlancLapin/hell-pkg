@@ -55,5 +55,4 @@ else
     exit 1
 fi
 
-unset __HELLSCRIPTS_PkgManagersArray
-unset __HELLSCRIPTS_PKGMANAGER
+unset __HELLSCRIPTS_PkgManagersArray __HELLSCRIPTS_PKGMANAGER

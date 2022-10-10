@@ -28,7 +28,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
         trap "$@" EXIT SIGKILL SIGINT
     }
 
-    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && set +a &> /dev/null"
+    __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && set +a"
 
     function __HELLSCRIPTS_SET_ZSH_AS_DEFAULT_SHELL {
         if [[ ! $(readlink /proc/$$/exe &> /dev/null | grep "zsh") ]]
@@ -48,7 +48,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     }
 
     function __HELLSCRIPTS_OPEN_EDITOR {
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_EDITOR_FILES &> /dev/null"
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_EDITOR_FILES"
         if [[ $# -eq 0 ]]
         then
             __HELLSCRIPTS_EDITOR_FILES=""
@@ -153,7 +153,7 @@ function __HELLSCRIPTS_INJECT_FUNS {
     }
 
     function __HELLSCRIPTS_WRITE_LOGS {
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOGGER_CURRENT_FILE &> /dev/null"
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOGGER_CURRENT_FILE"
         __HELLSCRIPTS_LOGGER_CURRENT_FILE=""
 
         if [[ $# -ne 0 ]]; then __HELLSCRIPTS_LOGGER_CURRENT_FILE="$1"; fi
@@ -244,13 +244,13 @@ function __HELLSCRIPTS_INJECT_FUNS {
     }
 
     function __HELLSCRIPTS_FETCH_PATHES {
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_DIRS &> /dev/null"
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_DIRS"
         __HELLSCRIPTS_DIRS=$(find $__HELLSCRIPTS_ATTR[REPO_DIR] -type d -not -path "$__HELLSCRIPTS_ATTR[REPO_DIR]/.git*")
         echo "${__HELLSCRIPTS_DIRS//[$'\t\r\n']/:}:$HOME/.emacs.d/bin"
     }
 
     function __HELLSCRIPTS_INJECT_PATHES {
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_NEW_PATH_ELM &> /dev/null"
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_NEW_PATH_ELM"
         __HELLSCRIPTS_NEW_PATH_ELM=$(eval __HELLSCRIPTS_FETCH_PATHES)
         PATH="$PATH:$__HELLSCRIPTS_NEW_PATH_ELM"
         __HELLSCRIPTS_LOGGER "Updated PATH with values:\n" \
