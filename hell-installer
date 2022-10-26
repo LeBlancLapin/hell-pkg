@@ -23,6 +23,28 @@ function __HELLSCRIPTS_INJECT_FUNS {
 
     __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && set +a"
 
+    function __HELLSCRIPTS_WRITE_LOGS {
+        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOGGER_CURRENT_FILE"
+        __HELLSCRIPTS_LOGGER_CURRENT_FILE=""
+
+        if [[ $# -ne 0 ]]; then __HELLSCRIPTS_LOGGER_CURRENT_FILE="$1"; fi
+        if [[ $# -gt 1 ]]; then return 7; fi
+        if [[ ! -f "$__HELLSCRIPTS_LOG_FILE" && ! -f "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" ]]; then return 2; fi
+        if [[ -z "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" ]]; then __HELLSCRIPTS_LOGGER_CURRENT_FILE="$__HELLSCRIPTS_LOG_FILE"; fi
+
+        read line
+        if [[ $line ]]
+        then
+            echo -e $(date) >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
+            2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
+            while read l
+            do
+                2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
+            done
+        fi
+        echo -e "\n" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
+    }
+
     function __HELLSCRIPTS_CREATE_ROOT_DIRECTORY {
         if [[ ! -d "$__HELLSCRIPTS_FOLDER" ]]
         then
@@ -56,20 +78,20 @@ function __HELLSCRIPTS_INJECT_FUNS {
             __HELLSCRIPTS_EDITOR_FILES="$@"
         fi
 
-        "$EDITOR" "$__HELLSCRIPTS_EDITOR_FILES"  ||
-        vim "$__HELLSCRIPTS_EDITOR_FILES"        ||
-        emacs "$__HELLSCRIPTS_EDITOR_FILES"      ||
-        vifm "$__HELLSCRIPTS_EDITOR_FILES"       ||
-        nano "$__HELLSCRIPTS_EDITOR_FILES"       ||
-        vi "$__HELLSCRIPTS_EDITOR_FILES"         ||
-        ne "$__HELLSCRIPTS_EDITOR_FILES"         ||
-        >&2 echo "Can't open any editor, configure your EDITOR environment variable."  &&
+        ([[! -z $__HELLSCRIPTS_EDITOR_FILES ]] && "$EDITOR" "$__HELLSCRIPTS_EDITOR_FILES")  ||
+        vim "$__HELLSCRIPTS_EDITOR_FILES"                                                   ||
+        emacs "$__HELLSCRIPTS_EDITOR_FILES"                                                 ||
+        vifm "$__HELLSCRIPTS_EDITOR_FILES"                                                  ||
+        nano "$__HELLSCRIPTS_EDITOR_FILES"                                                  ||
+        vi "$__HELLSCRIPTS_EDITOR_FILES"                                                    ||
+        ne "$__HELLSCRIPTS_EDITOR_FILES"                                                    ||
+        >&2 echo "Can't open any editor, configure your EDITOR environment variable."       &&
         return 1
     }
 
     function __HELLSCRIPTS_EDIT_ZSHRC {
-        touch "$__HELLSCRIPTS_ZSHRC_FILEPATH"
-        if [[ ! -f "$__HELLSCRIPTS_ZSHRC_FILEPATH" || ! $(cat "$__HELLSCRIPTS_ZSHRC_FILEPATH" &>/dev/null | grep "HELLSCRIPTS") ]]
+        touch "$__HELLSCRIPTS_ZSHRC_FILEPATH" &> /dev/null
+        if [[ ! $(cat "$__HELLSCRIPTS_ZSHRC_FILEPATH" &>/dev/null | grep "HELLSCRIPTS") ]]
         then
             (
                 echo "# __HELLSCRIPTS_LOG_FILE=\"\${__HELLSCRIPTS_LOG_FILE:-\`mktemp\`}\" # [HELL_CONFIG_LINE]"
@@ -99,7 +121,19 @@ function __HELLSCRIPTS_INJECT_FUNS {
                 echo "# fi # [HELL_CONFIG_LINE]"
             ) >> "$__HELLSCRIPTS_ZSHRC_FILEPATH"
             __HELLSCRIPTS_OPEN_EDITOR "$__HELLSCRIPTS_ZSHRC_FILEPATH"
+            if [[ ! -f "$__HELLSCRIPTS_ZSHRC_FILEPATH" ]]
+            then
+                $__HELLSCRIPTS_INSTALLER_EPIC_FAILED=true
+                2>&1 echo "[HellScripts ERROR] Failed to edit your ~/.zshrc ... Aborting."
+                exit 1
+            fi
         else
+            if [[ ! -f "$__HELLSCRIPTS_ZSHRC_FILEPATH" ]]
+            then
+                $__HELLSCRIPTS_INSTALLER_EPIC_FAILED=true
+                2>&1 echo "[HellScripts ERROR] Failed to edit your ~/.zshrc ... Aborting."
+                exit 1
+            fi
             sed '/HELL_CONFIG_LINE/ s/^#\ //' -i "$__HELLSCRIPTS_ZSHRC_FILEPATH"
             if $__HELLSCRIPTS_REINSTALLING
             then
@@ -139,6 +173,13 @@ function __HELLSCRIPTS_INJECT_FUNS {
             echo "set +a"
         ) >> "$__HELLSCRIPTS_HELLMAP_FILEPATH"
 
+        if [[ ! -f "$__HELLSCRIPTS_HELLMAP_FILEPATH" ]]
+        then
+            $__HELLSCRIPTS_INSTALLER_EPIC_FAILED=true
+            2>&1 echo "[HellScripts ERROR] Failed to create the zsh_hellmap file... Aborting."
+            exit 1
+        fi
+
         __HELLSCRIPTS_OPEN_EDITOR "$__HELLSCRIPTS_HELLMAP_FILEPATH"
         __HELLSCRIPTS_EDIT_ZSHRC
     }
@@ -150,28 +191,6 @@ function __HELLSCRIPTS_INJECT_FUNS {
         rm -f "$__HELLSCRIPTS_HELLMAP_FILEPATH"
         sed 's/^.*\bHELL_CONFIG_LINE\b.*$/#\ &/' -i "$__HELLSCRIPTS_ZSHRC_FILEPATH"
         rm -rf "$__HELLSCRIPTS_FOLDER"
-    }
-
-    function __HELLSCRIPTS_WRITE_LOGS {
-        __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_LOGGER_CURRENT_FILE"
-        __HELLSCRIPTS_LOGGER_CURRENT_FILE=""
-
-        if [[ $# -ne 0 ]]; then __HELLSCRIPTS_LOGGER_CURRENT_FILE="$1"; fi
-        if [[ $# -gt 1 ]]; then return 7; fi
-        if [[ ! -f "$__HELLSCRIPTS_LOG_FILE" && ! -f "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" ]]; then return 2; fi
-        if [[ -z "$__HELLSCRIPTS_LOGGER_CURRENT_FILE" ]]; then __HELLSCRIPTS_LOGGER_CURRENT_FILE="$__HELLSCRIPTS_LOG_FILE"; fi
-
-        read line
-        if [[ $line ]]
-        then
-            echo -e $(date) >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
-            2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
-            while read l
-            do
-                2>&1 echo -ne "$line" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
-            done
-        fi
-        echo -e "\n" >> "$__HELLSCRIPTS_LOGGER_CURRENT_FILE"
     }
 
     function __HELLSCRIPTS_DROP_LOGGER {
