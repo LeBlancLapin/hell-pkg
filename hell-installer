@@ -12,13 +12,6 @@ __HELLSCRIPTS_LOG_FILE="${__HELLSCRIPTS_LOG_FILE:-`mktemp`}"
 __HELLSCRIPTS_ZSHRC_FILEPATH="$HOME/.zshrc"
 
 function __HELLSCRIPTS_INJECT_FUNS {
-    function __HELLSCRIPTS_CREATE_ROOT_DIRECTORY {
-        if [[ ! -d "$__HELLSCRIPTS_FOLDER" ]]
-        then
-            mkdir "$__HELLSCRIPTS_FOLDER" &> /dev/null
-        fi
-    }
-
     function __HELLSCRIPTS_SET_AT_EXIT_TRAP {
         if [[ $# -eq 0 ]]
         then
@@ -29,6 +22,13 @@ function __HELLSCRIPTS_INJECT_FUNS {
     }
 
     __HELLSCRIPTS_SET_AT_EXIT_TRAP "unset __HELLSCRIPTS_REINSTALLING && set +a"
+
+    function __HELLSCRIPTS_CREATE_ROOT_DIRECTORY {
+        if [[ ! -d "$__HELLSCRIPTS_FOLDER" ]]
+        then
+            mkdir "$__HELLSCRIPTS_FOLDER" &> /dev/null
+        fi
+    }
 
     function __HELLSCRIPTS_SET_ZSH_AS_DEFAULT_SHELL {
         if [[ ! $(readlink /proc/$$/exe &> /dev/null | grep "zsh") ]]
